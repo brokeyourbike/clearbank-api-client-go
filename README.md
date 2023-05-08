@@ -6,3 +6,25 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/147e88944ef3303bba6d/test_coverage)](https://codeclimate.com/github/brokeyourbike/clearbank-api-client-go/test_coverage)
 
 ClearBank API Client for Go
+
+## Example
+
+```go
+package main
+
+import (
+    "context"
+
+    "github.com/brokeyourbike/clearbank-api-client-go"
+    "github.com/stretchr/testify/assert"
+)
+
+func main() {
+    client := clearbank.NewClient("token", signer, clearbank.WithBaseURL("https://api.clear.bank"))
+
+    ctx := context.Background()
+
+    err := client.Test(clearbank.RequestIdContext(ctx, "123"), "hello")
+    assert.NoError(t, err)
+}
+```
