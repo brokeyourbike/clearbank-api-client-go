@@ -1,0 +1,34 @@
+name: tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+    - uses: brokeyourbike/go-mockery-action@v0.1
+      with:
+        mockery-version: '2.23.1'
+    - run: mockery --all --keeptree
+    - run: go build -v ./...
+    - run: go test -race -covermode=atomic -coverprofile=coverage.out -v ./...
+
+    - uses: paambaati/codeclimate-action@v3.0.0
+      continue-on-error: true
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TOKEN }}
+      with:
+        coverageCommand: ''
+        prefix: 'github.com/brokeyourbike/clearbank-api-client-go'
+        coverageLocations: ./coverage.out:gocov
