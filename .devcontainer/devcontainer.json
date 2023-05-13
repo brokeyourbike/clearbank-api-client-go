@@ -14,5 +14,15 @@
 				"GitHub.copilot"
 			]
 		}
-	}
+	},
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+    "features": {
+        "ghcr.io/brokeyourbike/devcontainer-features/mockery-go:0": {
+            "version": "2.14.0"
+        },
+        "ghcr.io/brokeyourbike/devcontainer-features/staticcheck:0": {
+            "version": "2023.1"
+        }
+    }
 }

@@ -20,7 +20,7 @@ jobs:
     - run: go build -v ./...
     - run: go test -race -covermode=atomic -coverprofile=coverage.out -v ./...
 
-    - uses: paambaati/codeclimate-action@v3.0.0
+    - uses: paambaati/codeclimate-action@v4
       continue-on-error: true
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TOKEN }}
@@ -28,3 +28,6 @@ jobs:
         coverageCommand: ''
         prefix: 'github.com/brokeyourbike/clearbank-api-client-go'
         coverageLocations: ./coverage.out:gocov
+
+    - uses: codecov/codecov-action@v3
+      continue-on-error: true
