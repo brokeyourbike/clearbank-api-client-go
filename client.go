@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/brokeyourbike/clearbank-api-client-go/signature"
 )
 
 const (
@@ -22,13 +24,13 @@ type Client struct {
 	baseURL    string
 	token      string
 	httpClient *http.Client
-	signer     Signer
+	signer     signature.Signer
 }
 
 // ClientOption is a function that configures a Client.
 type ClientOption func(*Client)
 
-func NewClient(token string, signer Signer, options ...ClientOption) *Client {
+func NewClient(token string, signer signature.Signer, options ...ClientOption) *Client {
 	c := &Client{
 		baseURL:    defaultBaseURL,
 		token:      token,

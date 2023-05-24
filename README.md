@@ -20,7 +20,7 @@ import (
 )
 
 func main() {
-    client := clearbank.NewClient("token", signer, clearbank.WithBaseURL("https://api.clear.bank"))
+    client := clearbank.NewClient("token", signer)
 
     ctx := context.Background()
 

@@ -1,4 +1,4 @@
-package clearbank
+package signature
 
 import "context"
 
