@@ -7,7 +7,13 @@
 
 ClearBank API Client for Go
 
-## Example
+## Installation
+
+```bash
+go get github.com/brokeyourbike/clearbank-api-client-go
+```
+
+## Example
 
 ```go
 package main
