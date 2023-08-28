@@ -54,3 +54,20 @@ func TestFailedSign(t *testing.T) {
 
 	assert.Error(t, client.Test(ctx, "hello!"))
 }
+
+func TestEnexpectedStatus(t *testing.T) {
+	mockSigner := signature.NewMockSigner(t)
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+
+	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
+
+	ctx := context.TODO()
+	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
+
+	resp := &http.Response{StatusCode: 500, Body: io.NopCloser(bytes.NewReader(nil))}
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
+
+	err := client.Test(ctx, "hello!")
+	require.Error(t, err)
+	require.ErrorIs(t, err, clearbank.UnexpectedResponse{Status: 500})
+}
