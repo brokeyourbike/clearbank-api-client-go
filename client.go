@@ -18,6 +18,10 @@ type HttpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
+type Client interface{}
+
+var _ Client = (*client)(nil)
+
 type client struct {
 	httpClient HttpClient
 	signer     Signer
