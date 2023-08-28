@@ -3,6 +3,7 @@ package clearbank_test
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"testing"
@@ -40,4 +41,16 @@ func TestTest(t *testing.T) {
 	require.Contains(t, hook.Entries[1].Data, "http.response.status_code")
 	require.Contains(t, hook.Entries[1].Data, "http.response.body.content")
 	require.Contains(t, hook.Entries[1].Data, "http.response.headers")
+}
+
+func TestFailedSign(t *testing.T) {
+	mockSigner := signature.NewMockSigner(t)
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+
+	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
+
+	ctx := context.TODO()
+	mockSigner.On("Sign", ctx, mock.Anything).Return(nil, errors.New("failed to sign")).Once()
+
+	assert.Error(t, client.Test(ctx, "hello!"))
 }
