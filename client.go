@@ -18,7 +18,9 @@ type HttpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-type Client interface{}
+type Client interface {
+	TestClient
+}
 
 var _ Client = (*client)(nil)
 
