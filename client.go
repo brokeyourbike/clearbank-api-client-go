@@ -7,33 +7,34 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 )
 
-const (
-	defaultBaseURL = "https://institution-api-sim.clearbank.co.uk"
-)
+const defaultBaseURL = "https://institution-api-sim.clearbank.co.uk"
 
 // requestIdCtx is the context key for the request ID.
 type requestIdCtx struct{}
 
+type HttpClient interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
 // Client is a ClearBank API client.
-type Client struct {
+type client struct {
+	httpClient HttpClient
+	signer     Signer
 	baseURL    string
 	token      string
-	httpClient *http.Client
-	signer     Signer
 }
 
 // ClientOption is a function that configures a Client.
-type ClientOption func(*Client)
+type ClientOption func(*client)
 
-func NewClient(token string, signer Signer, options ...ClientOption) *Client {
-	c := &Client{
-		baseURL:    defaultBaseURL,
-		token:      token,
+func NewClient(token string, signer Signer, options ...ClientOption) *client {
+	c := &client{
 		httpClient: http.DefaultClient,
 		signer:     signer,
+		baseURL:    defaultBaseURL,
+		token:      token,
 	}
 
 	for _, option := range options {
@@ -43,21 +44,7 @@ func NewClient(token string, signer Signer, options ...ClientOption) *Client {
 	return c
 }
 
-// WithHTTPClient sets the HTTP client for the ClearBank API client.
-func WithHTTPClient(c *http.Client) ClientOption {
-	return func(client *Client) {
-		client.httpClient = c
-	}
-}
-
-// WithBaseURL sets the base URL for the ClearBank API client.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(client *Client) {
-		client.baseURL = strings.TrimSuffix(baseURL, "/")
-	}
-}
-
-func (c *Client) NewRequest(ctx context.Context, method, url string, body interface{}) (*http.Request, error) {
+func (c *client) NewRequest(ctx context.Context, method, url string, body interface{}) (*http.Request, error) {
 	req, err := http.NewRequestWithContext(ctx, method, c.baseURL+url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
@@ -85,7 +72,7 @@ func (c *Client) NewRequest(ctx context.Context, method, url string, body interf
 	return req, nil
 }
 
-func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*http.Response, error) {
+func (c *client) Do(ctx context.Context, req *http.Request, v interface{}) (*http.Response, error) {
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return resp, fmt.Errorf("failed to send request: %w", err)

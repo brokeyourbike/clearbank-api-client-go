@@ -13,26 +13,13 @@ ClearBank API Client for Go
 go get github.com/brokeyourbike/clearbank-api-client-go
 ```
 
-## Example
+## Usage
 
 ```go
-package main
+client := clearbank.NewClient("token", signer)
 
-import (
-    "context"
-
-    "github.com/brokeyourbike/clearbank-api-client-go"
-    "github.com/stretchr/testify/assert"
-)
-
-func main() {
-    client := clearbank.NewClient("token", signer, clearbank.WithBaseURL("https://api.clear.bank"))
-
-    ctx := context.Background()
-
-    err := client.Test(clearbank.RequestIdContext(ctx, "123"), "hello")
-    assert.NoError(t, err)
-}
+err := client.Test(clearbank.RequestIdContext(context.TODO(), "123"), "hello")
+require.NoError(t, err)
 ```
 
 ## Authors

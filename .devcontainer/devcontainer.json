@@ -1,27 +1,21 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/go
 {
-	"name": "clearbank-api-client-go",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/go:0-1.19",
-
-	// Configure tool-specific properties.
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"golang.Go",
-				"wayou.vscode-todo-highlight"
-			]
-		}
-	},
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
+    "name": "clearbank-api-client-go",
+    "image": "mcr.microsoft.com/devcontainers/go:1-1.21-bookworm",
     "features": {
-        "ghcr.io/brokeyourbike/devcontainer-features/mockery-go:0": {
-            "version": "2.14.0"
-        },
         "ghcr.io/brokeyourbike/devcontainer-features/staticcheck:0": {
-            "version": "2023.1"
+            "version": "2023.1.5"
+        },
+        "ghcr.io/brokeyourbike/devcontainer-features/mockery-go:0": {
+            "version": "2.33.0"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "golang.Go"
+            ]
         }
     }
 }
