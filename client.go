@@ -60,15 +60,13 @@ func (c *client) newRequest(ctx context.Context, method, url string, body interf
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	logEntry := logrus.WithContext(ctx)
+	var b []byte
 
 	if req.Method == http.MethodPost || req.Method == http.MethodPatch {
-		b, err := json.Marshal(body)
+		b, err = json.Marshal(body)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal payload: %w", err)
 		}
-
-		logEntry.WithField("http.request.body.content", string(b))
 
 		signature, err := c.signer.Sign(ctx, b)
 		if err != nil {
@@ -86,7 +84,10 @@ func (c *client) newRequest(ctx context.Context, method, url string, body interf
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.token))
 
 	if c.logger != nil {
-		logEntry.WithField("http.request.headers.request_id", requestID).Debug("clearbank.client -> request")
+		c.logger.WithContext(ctx).WithFields(logrus.Fields{
+			"http.request.body.content":       string(b),
+			"http.request.headers.request_id": requestID,
+		}).Debug("clearbank.client -> request")
 	}
 
 	return NewRequest(req), nil
@@ -107,7 +108,7 @@ func (c *client) do(ctx context.Context, req *request) error {
 	resp.Body = io.NopCloser(bytes.NewBuffer(b))
 
 	if c.logger != nil {
-		logrus.WithContext(ctx).WithFields(logrus.Fields{
+		c.logger.WithContext(ctx).WithFields(logrus.Fields{
 			"http.response.status_code":  resp.StatusCode,
 			"http.response.body.content": string(b),
 			"http.response.headers":      resp.Header,
