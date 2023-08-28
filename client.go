@@ -18,7 +18,6 @@ type HttpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-// Client is a ClearBank API client.
 type client struct {
 	httpClient HttpClient
 	signer     Signer
