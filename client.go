@@ -24,6 +24,7 @@ type HttpClient interface {
 
 type Client interface {
 	TestClient
+	RateClient
 }
 
 var _ Client = (*client)(nil)
