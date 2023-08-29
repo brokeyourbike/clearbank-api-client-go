@@ -4,14 +4,19 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type TransactionsClient interface {
 	InitiateFPSTransactions(context.Context, CreateTransactionsPayload) (TransactionsCreatedResponse, error)
 	InitiateCHAPSTransactions(context.Context, CreateTransactionsPayload) (TransactionsCreatedResponse, error)
 	InitiateFPSPaymentOriginatedOverseas(context.Context, CreateFPSPaymentOriginatedOverseasPayload) (TransactionsCreatedResponse, error)
-	InitiateMCCYTransactions(context.Context, CreateMCCYTransactionsPayload) error
-	InitiateInternalTransaction(context.Context, CreateInternalTransactionPayload) error
+	FetchTransactions(ctx context.Context, params FetchTransactionsParams) (TransactionsResponse, error)
+	FetchTransactionsForAccount(ctx context.Context, accountID uuid.UUID, params FetchTransactionsParams) (TransactionsResponse, error)
+	FetchTransactionsForVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, params FetchTransactionsParams) (TransactionsResponse, error)
 }
 
 type CreditTransfer struct {
@@ -278,162 +283,95 @@ func (c *client) InitiateFPSPaymentOriginatedOverseas(ctx context.Context, paylo
 	return data, c.do(ctx, req)
 }
 
-type MCCYAccountIdentifier struct {
-	Identifier string `json:"identifier"`
-	Kind       string `json:"kind"`
+type FetchTransactionsParams struct {
+	PageNumber    int
+	PageSize      int
+	StartDateTime time.Time
+	EndDateTime   time.Time
 }
 
-type MCCYIntermediaryAgent struct {
-	// Information that identifies the intermediary agent as a financial institution.
-	// Mandatory only when intermediary agent details are being provided.
-	FinancialInstitutionIdentification struct {
-		// Intermediary agent’s Business Identifier Code (BIC).
-		// No need to specify if you are providing the intermediary agent’s American Bankers Association (ABA) routing number.
-		BIC string `json:"bic,omitempty"`
-
-		// Intermediary agent’s American Bankers Association (ABA) routing number.
-		// No need to specify if you are providing the intermediary agent’s Business Identifier Code (BIC).
-		ABA string `json:"aba,omitempty"`
-
-		// Intermediary agent’s name.
-		Name string `json:"name,omitempty"`
-
-		// Information about the intermediary agent’s address.
-		// Mandatory only when financial institution identification details are being provided.
-		AddressDetails struct {
-			AddressLine1 string `json:"addressLine1,omitempty"`
-			AddressLine2 string `json:"addressLine2,omitempty"`
-			AddressLine3 string `json:"addressLine3,omitempty"`
-			PostCode     string `json:"postCode,omitempty"`
-			Country      string `json:"country"`
-		} `json:"addressDetails"`
-	} `json:"FinancialInstitutionIdentification"`
+// ApplyFor applies values to the given request as query parameters.
+func (p FetchTransactionsParams) ApplyFor(req *request) {
+	if p.PageNumber != 0 {
+		req.AddQueryParam("pageNumber", strconv.Itoa(p.PageNumber))
+	}
+	if p.PageSize != 0 {
+		req.AddQueryParam("pageSize", strconv.Itoa(p.PageSize))
+	}
+	if !p.StartDateTime.IsZero() {
+		req.AddQueryParam("startDateTime", p.StartDateTime.Format("2006-01-02"))
+	}
+	if !p.EndDateTime.IsZero() {
+		req.AddQueryParam("endDateTime", p.EndDateTime.Format("2006-01-02"))
+	}
 }
 
-type MCCYTransactionPayload struct {
-	// Unique identifier provided to ClearBank for each payment.
-	EndToEndID string `json:"endToEndId"`
-
-	// Reference provided by the debtor for the payment.
-	Reference string `json:"reference"`
-
-	// Instructed payment amount.
-	Amount float64 `json:"amount"`
-
-	// The name used to identify the legal owner of the account from which the funds will be debited.
-	DebtorName string `json:"debtorName"`
-
-	// Information about the debtor’s address.
-	DebtorAddress struct {
-		AddressLine1 string `json:"addressLine1"`
-		AddressLine2 string `json:"addressLine2"`
-		AddressLine3 string `json:"addressLine3,omitempty"`
-		PostCode     string `json:"postCode"`
-		Country      string `json:"country"`
-	} `json:"debtorAddress"`
-
-	// Debtor’s Business Identifier Code (BIC).
-	DebtorBic string `json:"debtorBic,omitempty"`
-
-	// The unique identifier for the account.
-	DebtorAccountIdentifier MCCYAccountIdentifier `json:"accountIdentifier"`
-
-	// Three-letter ISO currency code for the currency supported by the debtor account.
-	DebtorAccountCurrency string `json:"debtorAccountCurrency"`
-
-	// Information about the intermediary/correspondent bank.
-	IntermediaryAgent *MCCYIntermediaryAgent `json:"intermediaryAgent,omitempty"`
-
-	// Information about the creditor of the transaction.
-	Creditor struct {
-		// Creditor’s name.
-		Name string `json:"name"`
-
-		// Information about the creditor’s address.
-		Address struct {
-			AddressLine1 string `json:"addressLine1"`
-			AddressLine2 string `json:"addressLine2"`
-			AddressLine3 string `json:"addressLine3,omitempty"`
-			PostCode     string `json:"postCode"`
-			Country      string `json:"country"`
-		} `json:"address"`
-
-		// Creditor’s International Bank Account Number.
-		// Mandatory only if account number is not specified.
-		IBAN string `json:"iban,omitempty"`
-
-		// Creditor’s Account Number.
-		// Mandatory only if iban is not specified.
-		AccountNumber string `json:"accountNumber,omitempty"`
-	} `json:"creditor"`
-
-	CreditorAgent struct {
-		// Information that identifies the creditor agent as a financial institution.
-		FinancialInstitutionIdentification struct {
-			// Creditor agent’s Business Identifier Code (BIC).
-			BIC string `json:"bic,omitempty"`
-
-			// Creditor agent’s American Bankers Association (ABA) routing number.
-			ABA string `json:"aba,omitempty"`
-
-			// Creditor agent’s Clearing System Id Code.
-			ClearingSystemIDCode string `json:"clearingSystemIdCode,omitempty"`
-
-			// Creditor agent’s Member Id for the specified clearing system.
-			// Mandatory only when Clearing System Id Code has been provided.
-			MemberID string `json:"memberId,omitempty"`
-
-			// Creditor agent’s name.
-			Name string `json:"name"`
-
-			// Information about the creditor agent’s address.
-			AddressDetails struct {
-				AddressLine1 string `json:"addressLine1,omitempty"`
-				AddressLine2 string `json:"addressLine2,omitempty"`
-				AddressLine3 string `json:"addressLine3,omitempty"`
-				PostCode     string `json:"postCode,omitempty"`
-				Country      string `json:"country"`
-			} `json:"addressDetails"`
-		} `json:"financialInstitutionIdentification"`
-	} `json:"creditorAgent"`
+type TransactionResponse struct {
+	Amount struct {
+		InstructedAmount float64 `json:"instructedAmount"`
+		Currency         string  `json:"currency"`
+	} `json:"amount"`
+	CounterpartAccount struct {
+		Identification struct {
+			IBAN          string `json:"iban"`
+			AccountName   string `json:"accountName"`
+			SortCode      string `json:"sortCode"`
+			AccountNumber string `json:"accountNumber"`
+			Reference     string `json:"reference"`
+		} `json:"identification"`
+	} `json:"counterpartAccount"`
+	DebitCreditCode            string    `json:"debitCreditCode"`
+	EndToEndIdentifier         string    `json:"endToEndIdentifier"`
+	TransactionID              uuid.UUID `json:"transactionId"`
+	TransactionReference       string    `json:"transactionReference"`
+	TransactionTime            time.Time `json:"transactionTime"`
+	Status                     string    `json:"status"`
+	UltimateBeneficiaryAccount *struct {
+		ID   uuid.UUID `json:"id"`
+		IBAN string    `json:"iban"`
+	} `json:"ultimateBeneficiaryAccount"`
+	UltimateRemitterAccount *struct {
+		ID   uuid.UUID `json:"id"`
+		IBAN string    `json:"iban"`
+	} `json:"ultimateRemitterAccount"`
 }
 
-type CreateMCCYTransactionsPayload struct {
-	// Unique identifier for the batch in which the payment is being submitted.
-	BatchID string `json:"batchId,omitempty"`
-
-	// Three-letter ISO currency code for the outbound payment.
-	Currency string `json:"currencyCode"`
-
-	// Array of transactions.
-	Transactions []MCCYTransactionPayload `json:"transactions"`
+type TransactionsResponse struct {
+	Transactions []TransactionResponse `json:"transactions"`
 }
 
-func (c *client) InitiateMCCYTransactions(ctx context.Context, payload CreateMCCYTransactionsPayload) error {
-	req, err := c.newRequest(ctx, http.MethodPost, "/v1/mccy/payments", payload)
+func (c *client) FetchTransactions(ctx context.Context, params FetchTransactionsParams) (data TransactionsResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodGet, "/v2/Transactions", nil)
 	if err != nil {
-		return fmt.Errorf("failed to create request: %w", err)
+		return data, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	req.ExpectStatus(http.StatusAccepted)
-	return c.do(ctx, req)
+	params.ApplyFor(req)
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+	return data, c.do(ctx, req)
 }
 
-type CreateInternalTransactionPayload struct {
-	DebitAccountIBAN   string  `json:"debitAccountIban"`
-	CreditAccountIBAN  string  `json:"creditAccountIban"`
-	InstructedAmount   float64 `json:"instructedAmount"`
-	InstructedCurrency string  `json:"instructedCurrency"`
-	EndToEndID         string  `json:"endToEndId"`
-	Reference          string  `json:"reference"`
-}
-
-func (c *client) InitiateInternalTransaction(ctx context.Context, payload CreateInternalTransactionPayload) error {
-	req, err := c.newRequest(ctx, http.MethodPost, "/v1/mccy/internaltransfers", payload)
+func (c *client) FetchTransactionsForAccount(ctx context.Context, accountID uuid.UUID, params FetchTransactionsParams) (data TransactionsResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/Transactions", accountID.String()), nil)
 	if err != nil {
-		return fmt.Errorf("failed to create request: %w", err)
+		return data, fmt.Errorf("failed to create request: %w", err)
 	}
 
-	req.ExpectStatus(http.StatusAccepted)
-	return c.do(ctx, req)
+	params.ApplyFor(req)
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+	return data, c.do(ctx, req)
+}
+
+func (c *client) FetchTransactionsForVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, params FetchTransactionsParams) (data TransactionsResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/Virtual/%s/Transactions", accountID.String(), virtualAccountID.String()), nil)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	params.ApplyFor(req)
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+	return data, c.do(ctx, req)
 }

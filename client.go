@@ -27,8 +27,11 @@ type Client interface {
 	TestClient
 	RateClient
 	StatementClient
-	FxClient
+	// AccountsClient
 	TransactionsClient
+	// MCCYAccountsClient
+	MCCYTransactionsClient
+	FxClient
 }
 
 var _ Client = (*client)(nil)
