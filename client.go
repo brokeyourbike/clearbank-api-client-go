@@ -28,6 +28,7 @@ type Client interface {
 	RateClient
 	StatementClient
 	FxClient
+	TransactionsClient
 }
 
 var _ Client = (*client)(nil)
