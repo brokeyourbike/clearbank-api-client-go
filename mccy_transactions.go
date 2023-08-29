@@ -9,11 +9,30 @@ import (
 )
 
 type MCCYTransactionsClient interface {
-	InitiateMCCYTransactions(context.Context, CreateMCCYTransactionsPayload) error
 	InitiateInternalTransaction(context.Context, CreateInternalTransactionPayload) error
-	FetchMCCYTransaction(ctx context.Context, trxID uuid.UUID) (MCTransactionResponse, error)
+	InitiateMCCYTransactions(context.Context, CreateMCCYTransactionsPayload) error
+	FetchMCCYTransaction(ctx context.Context, trxID uuid.UUID) (MCCYTransactionResponse, error)
 	FetchMCCYTransactionsForAccount(ctx context.Context, accountID uuid.UUID, currency string, params FetchTransactionsParams) (MCCYTransactionsResponse, error)
 	FetchMCCYTransactionsForVirtualAccount(ctx context.Context, virtualAccountID uuid.UUID, currency string, params FetchTransactionsParams) (MCCYTransactionsResponse, error)
+}
+
+type CreateInternalTransactionPayload struct {
+	DebitAccountIBAN   string  `json:"debitAccountIban"`
+	CreditAccountIBAN  string  `json:"creditAccountIban"`
+	InstructedAmount   float64 `json:"instructedAmount"`
+	InstructedCurrency string  `json:"instructedCurrency"`
+	EndToEndID         string  `json:"endToEndId"`
+	Reference          string  `json:"reference"`
+}
+
+func (c *client) InitiateInternalTransaction(ctx context.Context, payload CreateInternalTransactionPayload) error {
+	req, err := c.newRequest(ctx, http.MethodPost, "/v1/mccy/internaltransfers", payload)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusAccepted)
+	return c.do(ctx, req)
 }
 
 type MCCYIntermediaryAgent struct {
@@ -152,26 +171,58 @@ func (c *client) InitiateMCCYTransactions(ctx context.Context, payload CreateMCC
 	return c.do(ctx, req)
 }
 
-type CreateInternalTransactionPayload struct {
-	DebitAccountIBAN   string  `json:"debitAccountIban"`
-	CreditAccountIBAN  string  `json:"creditAccountIban"`
-	InstructedAmount   float64 `json:"instructedAmount"`
-	InstructedCurrency string  `json:"instructedCurrency"`
-	EndToEndID         string  `json:"endToEndId"`
-	Reference          string  `json:"reference"`
+type MCCYTransactionStatus string
+
+const (
+	MCCYTransactionStatusClearing  MCCYTransactionStatus = "Clearing"
+	MCCYTransactionStatusSettled   MCCYTransactionStatus = "Settled"
+	MCCYTransactionStatusCancelled MCCYTransactionStatus = "Cancelled" // nolint: misspell
+)
+
+type MCCYTransactionResponse struct {
+	TransactionID       uuid.UUID     `json:"transactionId"`
+	AccountID           uuid.UUID     `json:"accountId"`
+	VirtualAccountID    uuid.NullUUID `json:"virtualAccountId"`
+	EndToEndID          string        `json:"endToEndId"`
+	Reference           string        `json:"reference"`
+	UltimateBeneficiary struct {
+		AccountIdentifiers []MCCYAccountIdentifier `json:"accountIdentifiers"`
+		PayeeName          string                  `json:"payeeName"`
+	} `json:"ultimateBeneficiary"`
+	UltimateRemitter struct {
+		AccountIdentifiers []MCCYAccountIdentifier `json:"accountIdentifiers"`
+		PayerName          string                  `json:"payerName"`
+	} `json:"ultimateRemitter"`
+	Amount           float64 `json:"amount"`
+	Currency         string  `json:"currency"`
+	CurrencyExchange struct {
+		Rate     float64 `json:"rate"`
+		Margin   float64 `json:"margin"`
+		Currency string  `json:"currency"`
+		Amount   float64 `json:"amount"`
+	} `json:"currencyExchangeRate"`
+	ActualPaymentMethod    string                `json:"actualPaymentMethod"`
+	RequestedPaymentMethod string                `json:"requestedPaymentMethod"`
+	Kind                   string                `json:"kind"`
+	CreatedAt              Time                  `json:"createdAt"`
+	SettledAt              string                `json:"settledAt"`
+	ValueAt                string                `json:"valueAt"`
+	CancelledAt            string                `json:"cancelledAt"`
+	CancellationCode       string                `json:"cancellationCode"`
+	Reason                 string                `json:"reason"`
+	Status                 MCCYTransactionStatus `json:"status"`
+	AdditionalProperties   []struct {
+		Key   string `json:"key"`
+		Value string `json:"value"`
+	} `json:"additionalProperties"`
+	Identifiers []struct {
+		Scope      string `json:"scope"`
+		Name       string `json:"name"`
+		Identifier string `json:"identifier"`
+	} `json:"identifiers"`
 }
 
-func (c *client) InitiateInternalTransaction(ctx context.Context, payload CreateInternalTransactionPayload) error {
-	req, err := c.newRequest(ctx, http.MethodPost, "/v1/mccy/internaltransfers", payload)
-	if err != nil {
-		return fmt.Errorf("failed to create request: %w", err)
-	}
-
-	req.ExpectStatus(http.StatusAccepted)
-	return c.do(ctx, req)
-}
-
-func (c *client) FetchMCCYTransaction(ctx context.Context, trxID uuid.UUID) (data MCTransactionResponse, err error) {
+func (c *client) FetchMCCYTransaction(ctx context.Context, trxID uuid.UUID) (data MCCYTransactionResponse, err error) {
 	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/mccy/v1/Transactions/%s", trxID.String()), nil)
 	if err != nil {
 		return data, fmt.Errorf("failed to create request: %w", err)
@@ -179,6 +230,10 @@ func (c *client) FetchMCCYTransaction(ctx context.Context, trxID uuid.UUID) (dat
 
 	req.ExpectStatus(http.StatusOK)
 	return data, c.do(ctx, req)
+}
+
+type MCCYTransactionsResponse struct {
+	Transactions []MCCYTransactionResponse `json:"transactions"`
 }
 
 func (c *client) FetchMCCYTransactionsForAccount(ctx context.Context, accountID uuid.UUID, currency string, params FetchTransactionsParams) (data MCCYTransactionsResponse, err error) {
