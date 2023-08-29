@@ -34,7 +34,7 @@ type MarketrateResponse struct {
 }
 
 func (c *client) FetchMarketrate(ctx context.Context, params MarketrateParams) (data MarketrateResponse, err error) {
-	req, err := c.newRequest(ctx, http.MethodPost, "/fx/v1/marketrate", nil)
+	req, err := c.newRequest(ctx, http.MethodGet, "/fx/v1/marketrate", nil)
 	if err != nil {
 		return data, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -58,7 +58,7 @@ type NegotiateResponse struct {
 }
 
 func (c *client) Negotiate(ctx context.Context) (data NegotiateResponse, err error) {
-	req, err := c.newRequest(ctx, http.MethodPost, "/fx/v1/marketdatastream/negotiate", nil)
+	req, err := c.newRequest(ctx, http.MethodGet, "/fx/v1/marketdatastream/negotiate", nil)
 	if err != nil {
 		return data, fmt.Errorf("failed to create request: %w", err)
 	}
