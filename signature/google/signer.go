@@ -23,7 +23,6 @@ type KeyManagementClient interface {
 	AsymmetricSign(context.Context, *kmspb.AsymmetricSignRequest, ...gax.CallOption) (*kmspb.AsymmetricSignResponse, error)
 }
 
-// Signer is a Google Cloud KMS signer.
 type signer struct {
 	client  KeyManagementClient
 	keyName string
