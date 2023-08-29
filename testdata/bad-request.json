@@ -1,0 +1,9 @@
+{
+    "type": "string",
+    "title": "string",
+    "status": 123,
+    "detail": "string",
+    "instance": "string",
+    "property1": null,
+    "property2": null
+}

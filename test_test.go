@@ -3,6 +3,7 @@ package clearbank_test
 import (
 	"bytes"
 	"context"
+	_ "embed"
 	"errors"
 	"io"
 	"net/http"
@@ -16,6 +17,9 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
+
+//go:embed testdata/bad-request.json
+var badRequest []byte
 
 func TestTest(t *testing.T) {
 	mockSigner := signature.NewMockSigner(t)
@@ -57,7 +61,7 @@ func TestFailedSign(t *testing.T) {
 	assert.Error(t, client.Test(ctx, "hello!"))
 }
 
-func TestEnexpectedStatus(t *testing.T) {
+func TestUnexpectedStatus(t *testing.T) {
 	mockSigner := signature.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 
@@ -72,4 +76,24 @@ func TestEnexpectedStatus(t *testing.T) {
 	err := client.Test(ctx, "hello!")
 	require.Error(t, err)
 	require.ErrorIs(t, err, clearbank.UnexpectedResponse{Status: 500})
+}
+
+func TestBadRequest(t *testing.T) {
+	mockSigner := signature.NewMockSigner(t)
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+
+	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
+
+	ctx := context.TODO()
+	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
+
+	resp := &http.Response{StatusCode: 400, Body: io.NopCloser(bytes.NewReader(badRequest))}
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
+
+	err := client.Test(ctx, "hello!")
+	require.Error(t, err)
+
+	got, ok := err.(clearbank.ErrResponse)
+	require.True(t, ok)
+	require.Equal(t, 123, got.Status)
 }

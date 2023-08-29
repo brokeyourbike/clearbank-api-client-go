@@ -14,7 +14,7 @@ func (r UnexpectedResponse) Error() string {
 type ErrResponse struct {
 	Type     string              `json:"type"`
 	Title    string              `json:"title"`
-	Status   int                 `json:"status"`
+	Status   int                 `json:"status" validate:"required"`
 	Details  string              `json:"detail"`
 	Instance string              `json:"instance"`
 	Errors   map[string][]string `json:"errors"`

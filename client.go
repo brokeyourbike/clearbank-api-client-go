@@ -10,6 +10,7 @@ import (
 	"slices"
 
 	"github.com/brokeyourbike/clearbank-api-client-go/signature"
+	"github.com/go-playground/validator/v10"
 	"github.com/sirupsen/logrus"
 )
 
@@ -25,6 +26,7 @@ type HttpClient interface {
 type Client interface {
 	TestClient
 	RateClient
+	StatementClient
 }
 
 var _ Client = (*client)(nil)
@@ -33,6 +35,7 @@ type client struct {
 	httpClient HttpClient
 	signer     signature.Signer
 	logger     *logrus.Logger
+	validate   *validator.Validate
 	baseURL    string
 	token      string
 }
@@ -44,6 +47,7 @@ func NewClient(token string, signer signature.Signer, options ...ClientOption) *
 	c := &client{
 		httpClient: http.DefaultClient,
 		signer:     signer,
+		validate:   validator.New(validator.WithRequiredStructEnabled()),
 		baseURL:    defaultBaseURL,
 		token:      token,
 	}
@@ -124,8 +128,7 @@ func (c *client) do(ctx context.Context, req *request) error {
 			return unexpectedResponse
 		}
 
-		// TODO: maybe we should setup validator to ensure errResponse is not empty
-		if errResponse.Status == 0 {
+		if err := c.validate.Struct(errResponse); err != nil {
 			return unexpectedResponse
 		}
 
