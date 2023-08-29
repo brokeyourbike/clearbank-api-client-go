@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/brokeyourbike/clearbank-api-client-go"
-	"github.com/brokeyourbike/clearbank-api-client-go/signature"
 	"github.com/stretchr/testify/assert"
 	mock "github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -25,18 +24,13 @@ var marketrateFail []byte
 var negotiateSuccess []byte
 
 func TestFetchMarketrate(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
-
-	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
-
-	ctx := context.TODO()
-	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
 
 	resp := &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader(marketrateSuccess))}
 	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
 
-	got, err := client.FetchMarketrate(ctx, clearbank.MarketrateParams{FixedSide: clearbank.FixedSideBuy})
+	got, err := client.FetchMarketrate(context.TODO(), clearbank.MarketrateParams{FixedSide: clearbank.FixedSideBuy})
 	require.NoError(t, err)
 
 	assert.Equal(t, 1.209602, got.MarketRate)
@@ -44,34 +38,25 @@ func TestFetchMarketrate(t *testing.T) {
 }
 
 func TestFetchMarketrate_Fail(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 
-	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
-
-	ctx := context.TODO()
-	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
 
 	resp := &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader(marketrateFail))}
 	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
 
-	_, err := client.FetchMarketrate(ctx, clearbank.MarketrateParams{FixedSide: clearbank.FixedSideBuy})
+	_, err := client.FetchMarketrate(context.TODO(), clearbank.MarketrateParams{FixedSide: clearbank.FixedSideBuy})
 	require.Error(t, err)
 }
 
 func TestFetchNegotiate(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
-
-	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
-
-	ctx := context.TODO()
-	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
 
 	resp := &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader(negotiateSuccess))}
 	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
 
-	got, err := client.Negotiate(ctx)
+	got, err := client.Negotiate(context.TODO())
 	require.NoError(t, err)
 
 	assert.Equal(t, "https://example.com", got.URL)
