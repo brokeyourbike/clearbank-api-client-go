@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.1.1...v0.2.0) (2023-08-29)
+
+
+### Features
+
+* nil signer ([4a23a1a](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/4a23a1a13767014ca3c47f4f0cfa315ec56ae0d2))
+
 ### [0.1.1](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.1.0...v0.1.1) (2023-08-29)
 
 
