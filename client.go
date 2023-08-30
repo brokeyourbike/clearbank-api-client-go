@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"slices"
+	"strings"
 
 	"github.com/brokeyourbike/clearbank-api-client-go/signature"
 	"github.com/go-playground/validator/v10"
@@ -27,9 +28,9 @@ type Client interface {
 	TestClient
 	RateClient
 	StatementClient
-	// AccountsClient
+	AccountsClient
 	TransactionsClient
-	// MCCYAccountsClient
+	MCCYAccountsClient
 	MCCYTransactionsClient
 	FxClient
 }
@@ -47,6 +48,27 @@ type client struct {
 
 // ClientOption is a function that configures a Client.
 type ClientOption func(*client)
+
+// WithHTTPClient sets the HTTP client for the ClearBank API client.
+func WithHTTPClient(c HttpClient) ClientOption {
+	return func(target *client) {
+		target.httpClient = c
+	}
+}
+
+// WithLogger sets the *logrus.Logger for the ClearBank API client.
+func WithLogger(l *logrus.Logger) ClientOption {
+	return func(target *client) {
+		target.logger = l
+	}
+}
+
+// WithBaseURL sets the base URL for the ClearBank API client.
+func WithBaseURL(baseURL string) ClientOption {
+	return func(target *client) {
+		target.baseURL = strings.TrimSuffix(baseURL, "/")
+	}
+}
 
 func NewClient(token string, signer signature.Signer, options ...ClientOption) *client {
 	c := &client{

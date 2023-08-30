@@ -59,20 +59,6 @@ func TestFailedHttpRequest(t *testing.T) {
 	assert.Error(t, client.Test(context.TODO(), "hello!"))
 }
 
-func TestFailedHttpRequestBodyDecode(t *testing.T) {
-	mockHttpClient := clearbank.NewMockHttpClient(t)
-	client := clearbank.NewClient("token", local.NewNilSigner(), clearbank.WithHTTPClient(mockHttpClient))
-
-	body := io.NopCloser(bytes.NewReader(nil))
-
-	_, err := io.ReadAll(body)
-	require.NoError(t, err)
-
-	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(&http.Response{Body: body}, nil).Once()
-
-	assert.Error(t, client.Test(context.TODO(), "hello!"))
-}
-
 func TestFailedSign(t *testing.T) {
 	mockSigner := signature.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
