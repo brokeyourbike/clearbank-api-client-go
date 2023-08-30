@@ -64,7 +64,10 @@ func TestFailedHttpRequestBodyDecode(t *testing.T) {
 	client := clearbank.NewClient("token", local.NewNilSigner(), clearbank.WithHTTPClient(mockHttpClient))
 
 	body := io.NopCloser(bytes.NewReader(nil))
-	require.NoError(t, body.Close())
+
+	_, err := io.ReadAll(body)
+	require.NoError(t, err)
+
 	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(&http.Response{Body: body}, nil).Once()
 
 	assert.Error(t, client.Test(context.TODO(), "hello!"))
