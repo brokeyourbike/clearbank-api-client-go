@@ -4,28 +4,30 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 )
 
 type MCCYAccountsClient interface {
 	// accounts
-	FetchMCCYAccount(context.Context, uuid.UUID) (MCCYAccountResponse, error)
-	FetchMCCYAccounts(context.Context, int, int) (MCCYAccountsResponse, error)
-	CreateMCCYAccount(context.Context, CreateMCCYAccountPayload) (MCCYAccountResponse, error)
-	UpdateMCCYAccount(context.Context, uuid.UUID, UpdateMCCYAccountPayload) (MCCYAccountResponse, error)
-	UpdateMCCYAccountStatus(context.Context, uuid.UUID, UpdateMCCYAccountStatusPayload) (MCCYAccountResponse, error)
-	EnableMCCYAccountCurrency(context.Context, uuid.UUID, EnableMCCYAccountCurrencyPayload) error
-	CloseMCCYAccount(context.Context, uuid.UUID, MCCYAccountCloseReason) error
-	FetchMCCYAccountBalances(context.Context, uuid.UUID) (MCCYAccountBalancesResponse, error)
+	FetchMCCYAccount(ctx context.Context, accountID uuid.UUID) (MCCYAccountResponse, error)
+	FetchMCCYAccounts(ctx context.Context, pageNum int, pageSize int) (MCCYAccountsResponse, error)
+	CreateMCCYAccount(ctx context.Context, payload CreateMCCYAccountPayload) (MCCYAccountResponse, error)
+	UpdateMCCYAccount(ctx context.Context, accountID uuid.UUID, payload UpdateMCCYAccountPayload) (MCCYAccountResponse, error)
+	UpdateMCCYAccountStatus(ctx context.Context, accountID uuid.UUID, payload UpdateMCCYAccountStatusPayload) (MCCYAccountResponse, error)
+	EnableMCCYAccountCurrency(ctx context.Context, accountID uuid.UUID, payload EnableMCCYAccountCurrencyPayload) error
+	CloseMCCYAccount(ctx context.Context, accountID uuid.UUID, reason MCCYAccountCloseReason) error
+	FetchMCCYAccountBalances(ctx context.Context, accountID uuid.UUID) (MCCYAccountBalancesResponse, error)
 
 	// virtual accounts
-	FetchMCCYVirtualAccount(context.Context, uuid.UUID) (MCCYVirtualAccountResponse, error)
-	FetchMCCYVirtualAccounts(context.Context, int, int) (MCCYVirtualAccountsResponse, error)
-	CreateMCCYVirtualAccount(context.Context, CreateMCCYVirtualAccountPayload) (MCCYVirtualAccountResponse, error)
-	UpdateMCCYVirtualAccount(context.Context, uuid.UUID, UpdateMCCYVirtualAccountPayload) (MCCYVirtualAccountResponse, error)
-	UpdateMCCYVirtualAccountStatus(context.Context, uuid.UUID, UpdateMCCYVirtualAccountStatusPayload) (MCCYVirtualAccountResponse, error)
-	CloseMCCYVirtualAccount(context.Context, uuid.UUID, MCCYAccountCloseReason) error
+	FetchMCCYVirtualAccount(ctx context.Context, virtualAccountID uuid.UUID) (MCCYVirtualAccountResponse, error)
+	FetchMCCYVirtualAccounts(ctx context.Context, pageNum int, pageSize int) (MCCYVirtualAccountsResponse, error)
+	CreateMCCYVirtualAccount(ctx context.Context, payload CreateMCCYVirtualAccountPayload) (MCCYVirtualAccountResponse, error)
+	UpdateMCCYVirtualAccount(ctx context.Context, virtualAccountID uuid.UUID, payload UpdateMCCYVirtualAccountPayload) (MCCYVirtualAccountResponse, error)
+	UpdateMCCYVirtualAccountStatus(ctx context.Context, virtualAccountID uuid.UUID, payload UpdateMCCYVirtualAccountStatusPayload) (MCCYVirtualAccountResponse, error)
+	CloseMCCYVirtualAccount(ctx context.Context, virtualAccountID uuid.UUID, reason MCCYAccountCloseReason) error
 }
 
 type MCCYAccountKind string
@@ -72,7 +74,17 @@ type MCCYAccountResponse struct {
 	StatusInformation string                  `json:"statusInformation"`
 }
 
-//
+func (c *client) FetchMCCYAccount(ctx context.Context, accountID uuid.UUID) (data MCCYAccountResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/MC", accountID.String()), nil)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+
+	return data, c.do(ctx, req)
+}
 
 type MCCYAccountsResponse struct {
 	Accounts []struct {
@@ -90,6 +102,20 @@ type MCCYAccountsResponse struct {
 	} `json:"accounts"`
 }
 
+func (c *client) FetchMCCYAccounts(ctx context.Context, pageNum int, pageSize int) (data MCCYAccountsResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodGet, "/mccy/v1/Accounts", nil)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.AddQueryParam("pageNumber", strconv.Itoa(pageNum))
+	req.AddQueryParam("pageSize", strconv.Itoa(pageSize))
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+
+	return data, c.do(ctx, req)
+}
+
 type RoutingCodeKind string
 
 const RoutingCodeKindGB RoutingCodeKind = "GBSortCode"
@@ -105,9 +131,33 @@ type CreateMCCYAccountPayload struct {
 	} `json:"routingCode"`
 }
 
+func (c *client) CreateMCCYAccount(ctx context.Context, payload CreateMCCYAccountPayload) (data MCCYAccountResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPost, "/mccy/v1/Accounts", payload)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusCreated)
+	req.DecodeTo(&data)
+
+	return data, c.do(ctx, req)
+}
+
 type UpdateMCCYAccountPayload struct {
 	Label string `json:"label"`
 	Owner string `json:"owner"`
+}
+
+func (c *client) UpdateMCCYAccount(ctx context.Context, accountID uuid.UUID, payload UpdateMCCYAccountPayload) (data MCCYAccountResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPatch, fmt.Sprintf("/mccy/v1/Accounts/%s", accountID.String()), payload)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+
+	return data, c.do(ctx, req)
 }
 
 type UpdateMCCYAccountStatusPayload struct {
@@ -116,11 +166,31 @@ type UpdateMCCYAccountStatusPayload struct {
 	Information  string `json:"information,omitempty"`
 }
 
+func (c *client) UpdateMCCYAccountStatus(ctx context.Context, accountID uuid.UUID, payload UpdateMCCYAccountStatusPayload) (data MCCYAccountResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPatch, fmt.Sprintf("/mccy/v1/Accounts/%s/status", accountID.String()), payload)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+
+	return data, c.do(ctx, req)
+}
+
 type EnableMCCYAccountCurrencyPayload struct {
 	Currency string `json:"currency"`
 }
 
-//
+func (c *client) EnableMCCYAccountCurrency(ctx context.Context, accountID uuid.UUID, payload EnableMCCYAccountCurrencyPayload) error {
+	req, err := c.newRequest(ctx, http.MethodPost, fmt.Sprintf("/mccy/v1/Accounts/%s/currencies", accountID.String()), payload)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusOK)
+	return c.do(ctx, req)
+}
 
 type MCCYAccountCloseReason string
 
@@ -132,12 +202,21 @@ const (
 	MCCYAccountCloseReasonDuplicateAccount       MCCYAccountCloseReason = "DuplicateAccount"
 )
 
-//
+func (c *client) CloseMCCYAccount(ctx context.Context, accountID uuid.UUID, reason MCCYAccountCloseReason) error {
+	req, err := c.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/mccy/v1/Accounts/%s", accountID.String()), nil)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.AddQueryParam("accountCloseReason", string(reason))
+	req.ExpectStatus(http.StatusNoContent)
+	return c.do(ctx, req)
+}
 
 type MCCYAccountBalance struct {
-	Currency  string  `json:"Currency"`
-	Available float64 `json:"Available"`
-	Actual    float64 `json:"Actual"`
+	Currency  string  `json:"currency"`
+	Available float64 `json:"available"`
+	Actual    float64 `json:"actual"`
 }
 
 type MCCYAccountBalancesResponse struct {
@@ -169,7 +248,17 @@ func (m *MCCYAccountBalancesResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-//
+func (c *client) FetchMCCYAccountBalances(ctx context.Context, accountID uuid.UUID) (data MCCYAccountBalancesResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/mccy/v1/Accounts/%s/balances", accountID.String()), nil)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+
+	return data, c.do(ctx, req)
+}
 
 type MCCYVirtualAccountResponse struct {
 	ID                uuid.UUID               `json:"id"`
@@ -181,11 +270,35 @@ type MCCYVirtualAccountResponse struct {
 	StatusInformation string                  `json:"statusInformation"`
 }
 
+func (c *client) FetchMCCYVirtualAccount(ctx context.Context, virtualAccountID uuid.UUID) (data MCCYVirtualAccountResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/mccy/v1/VirtualAccounts/%s", virtualAccountID.String()), nil)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+
+	return data, c.do(ctx, req)
+}
+
 type MCCYVirtualAccountsResponse struct {
 	VirtualAccounts []MCCYVirtualAccountResponse `json:"virtualAccounts"`
 }
 
-//
+func (c *client) FetchMCCYVirtualAccounts(ctx context.Context, pageNum int, pageSize int) (data MCCYVirtualAccountsResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodGet, "/mccy/v1/VirtualAccounts", nil)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.AddQueryParam("pageNumber", strconv.Itoa(pageNum))
+	req.AddQueryParam("pageSize", strconv.Itoa(pageSize))
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+
+	return data, c.do(ctx, req)
+}
 
 type CreateMCCYVirtualAccountPayload struct {
 	AccountID      string `json:"accountId"`
@@ -194,12 +307,59 @@ type CreateMCCYVirtualAccountPayload struct {
 	} `json:"virtualAccount"`
 }
 
+func (c *client) CreateMCCYVirtualAccount(ctx context.Context, payload CreateMCCYVirtualAccountPayload) (data MCCYVirtualAccountResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPost, "/mccy/v1/VirtualAccounts", payload)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusCreated)
+	req.DecodeTo(&data)
+
+	return data, c.do(ctx, req)
+}
+
 type UpdateMCCYVirtualAccountPayload struct {
 	Owner string `json:"owner"`
+}
+
+func (c *client) UpdateMCCYVirtualAccount(ctx context.Context, virtualAccountID uuid.UUID, payload UpdateMCCYVirtualAccountPayload) (data MCCYVirtualAccountResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPatch, fmt.Sprintf("/mccy/v1/VirtualAccounts/%s", virtualAccountID.String()), payload)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+
+	return data, c.do(ctx, req)
 }
 
 type UpdateMCCYVirtualAccountStatusPayload struct {
 	Status       string `json:"status"`
 	StatusReason string `json:"statusReason,omitempty"`
 	Information  string `json:"information,omitempty"`
+}
+
+func (c *client) UpdateMCCYVirtualAccountStatus(ctx context.Context, virtualAccountID uuid.UUID, payload UpdateMCCYVirtualAccountStatusPayload) (data MCCYVirtualAccountResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPatch, fmt.Sprintf("/mccy/v1/VirtualAccounts/%s/status", virtualAccountID.String()), payload)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+
+	return data, c.do(ctx, req)
+}
+
+func (c *client) CloseMCCYVirtualAccount(ctx context.Context, virtualAccountID uuid.UUID, reason MCCYAccountCloseReason) error {
+	req, err := c.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/mccy/v1/VirtualAccounts/%s", virtualAccountID.String()), nil)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.AddQueryParam("accountCloseReason", string(reason))
+	req.ExpectStatus(http.StatusNoContent)
+	return c.do(ctx, req)
 }
