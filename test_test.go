@@ -11,6 +11,7 @@ import (
 
 	"github.com/brokeyourbike/clearbank-api-client-go"
 	"github.com/brokeyourbike/clearbank-api-client-go/signature"
+	"github.com/brokeyourbike/clearbank-api-client-go/signature/local"
 	"github.com/sirupsen/logrus"
 	logrustest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
@@ -47,6 +48,26 @@ func TestTest(t *testing.T) {
 	require.Contains(t, hook.Entries[1].Data, "http.response.headers")
 
 	assert.Equal(t, "123", hook.Entries[0].Data["http.request.headers.request_id"])
+}
+
+func TestFailedHttpRequest(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", local.NewNilSigner(), clearbank.WithHTTPClient(mockHttpClient))
+
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(&http.Response{}, errors.New("cannot do")).Once()
+
+	assert.Error(t, client.Test(context.TODO(), "hello!"))
+}
+
+func TestFailedHttpRequestBodyDecode(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", local.NewNilSigner(), clearbank.WithHTTPClient(mockHttpClient))
+
+	body := io.NopCloser(bytes.NewReader(nil))
+	require.NoError(t, body.Close())
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(&http.Response{Body: body}, nil).Once()
+
+	assert.Error(t, client.Test(context.TODO(), "hello!"))
 }
 
 func TestFailedSign(t *testing.T) {
