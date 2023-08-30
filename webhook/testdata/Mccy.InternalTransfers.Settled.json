@@ -1,0 +1,8 @@
+{
+    "EndToEndId": "56de3483a56942eb90ccacf59661356f",
+    "DebitAccountIban": "GB00CUBK11223312345678",
+    "CreditAccountIban": "GB00CUBK88776687654321",
+    "InstructedCurrency": "NOK",
+    "InstructedAmount": 13,
+    "Reference": "f92af28f-0635-4d81-893f-6c32af1d2a17"
+}

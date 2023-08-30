@@ -9,20 +9,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-//go:embed testdata/webhook-TransactionSettled-with-supplementary.json
-var webhookTransactionSettledWithSupplementary []byte
+//go:embed testdata/TransactionSettled-with-supplementary.json
+var transactionSettledWithSupplementary []byte
 
-//go:embed testdata/webhook-TransactionSettled-no-supplementary.json
-var webhookTransactionSettledNoSupplementary []byte
+//go:embed testdata/TransactionSettled-no-supplementary.json
+var transactionSettledNoSupplementary []byte
 
 func TestWebhookTransactionSettledPayload(t *testing.T) {
 	var d1 webhook.WebhookTransactionSettledPayload
-	err := json.Unmarshal(webhookTransactionSettledWithSupplementary, &d1)
+	err := json.Unmarshal(transactionSettledWithSupplementary, &d1)
 	assert.NoError(t, err)
 	assert.Len(t, d1.SupplementaryData, 1)
 
 	var d2 webhook.WebhookTransactionSettledPayload
-	err = json.Unmarshal(webhookTransactionSettledNoSupplementary, &d2)
+	err = json.Unmarshal(transactionSettledNoSupplementary, &d2)
 	assert.NoError(t, err)
 	assert.Len(t, d2.SupplementaryData, 0)
 }
