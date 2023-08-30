@@ -1,0 +1,34 @@
+{
+    "Amount": 160,
+    "Scheme": "FasterPayments",
+    "Status": "Settled",
+    "Account": {
+        "BBAN": "12345",
+        "IBAN": "GB5412345",
+        "OwnerName": "JOHN DOE LTD",
+        "InstitutionName": "JOHN DOE",
+        "TransactionOwnerName": "JOHN DOE LTD"
+    },
+    "IsReturn": false,
+    "Reference": "TEST",
+    "CurrencyCode": "GBP",
+    "TransactionId": "00000000-0000-0000-0000-000000000000",
+    "DebitCreditCode": "Credit",
+    "TimestampCreated": "2023-07-23T00:00:01.58Z",
+    "TimestampSettled": "2023-07-23T00:00:01.687Z",
+    "SupplementaryData": [
+        {
+            "Name": "Amount",
+            "Value": "16000.0"
+        }
+   ],
+    "CounterpartAccount": {
+        "BBAN": "56789",
+        "IBAN": "GB4756789",
+        "OwnerName": "Not Provided",
+        "InstitutionName": "JANE DOE LTD",
+        "TransactionOwnerName": "JANE DOE"
+    },
+    "EndToEndTransactionId": "test123",
+    "ActualEndToEndTransactionId": "test123456"
+}

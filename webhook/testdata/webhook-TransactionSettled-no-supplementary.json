@@ -1,0 +1,29 @@
+{
+    "Amount": 70,
+    "Scheme": "Transfer",
+    "Status": "Settled",
+    "Account": {
+        "BBAN": "12345",
+        "IBAN": "GB6312345",
+        "OwnerName": "JOHN DOE",
+        "InstitutionName": "JOHN DOE PLC",
+        "TransactionOwnerName": "JOHN DOE"
+    },
+    "IsReturn": false,
+    "Reference": "FX Trade GBP/USD",
+    "CurrencyCode": "GBP",
+    "TransactionId": "00000000-0000-0000-0000-000000000000",
+    "DebitCreditCode": "Debit",
+    "TimestampCreated": "2023-07-21T00:00:11.317Z",
+    "TimestampSettled": "2023-07-21T00:00:11.803Z",
+    "TransactionSource": "FX Trade",
+    "CounterpartAccount": {
+        "BBAN": "456789",
+        "IBAN": "GB02456789",
+        "OwnerName": "Not Provided",
+        "InstitutionName": "Example Bank",
+        "TransactionOwnerName": "Des Seg Acc Retl - Treasury Account"
+    },
+    "EndToEndTransactionId": "12345",
+    "ActualEndToEndTransactionId": "fx_12345_CustomerDebit"
+}
