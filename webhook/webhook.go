@@ -1,6 +1,10 @@
 package webhook
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/google/uuid"
+)
 
 const (
 	Test                           = "FITestEvent"
@@ -40,4 +44,18 @@ type WebhookRequest struct {
 type WebhookResponse struct {
 	// The value that you receive in the webhook request.
 	Nonce int `json:"Nonce"`
+}
+
+// Transaction is a common interface for the transaction related webhooks.
+type Transaction interface {
+	GetID() uuid.UUID
+	GetEndToEndID() string
+	GetCurrency() string
+	GetAmount() float64
+	IsReturn() bool
+	GetReference() string
+	GetAccountIdentifier() string
+	GetAccountOwner() string
+	GetCounterpartAccountIdentifier() string
+	GetCounterpartAccountOwner() string
 }

@@ -36,6 +36,8 @@ type TransactionAccount struct {
 	InstitutionName      string `json:"InstitutionName"`
 }
 
+var _ Transaction = (*WebhookTransactionSettledPayload)(nil)
+
 // WebhookTransactionSettledPayload
 // This sends a webhook notification confirming the transaction has settled
 type WebhookTransactionSettledPayload struct {
@@ -66,6 +68,51 @@ type WebhookTransactionSettledPayload struct {
 	} `json:"SupplementaryData"`
 }
 
+func (w WebhookTransactionSettledPayload) GetID() uuid.UUID {
+	return w.TransactionID
+}
+
+func (w WebhookTransactionSettledPayload) GetEndToEndID() string {
+	return w.EndToEndTransactionID
+}
+
+func (w WebhookTransactionSettledPayload) GetCurrency() string {
+	return w.CurrencyCode
+}
+
+func (w WebhookTransactionSettledPayload) GetAmount() float64 {
+	if w.DebitCreditCode == DebitCreditCodeDebit {
+		return -w.Amount
+	}
+	return w.Amount
+}
+
+func (w WebhookTransactionSettledPayload) IsReturn() bool {
+	return w.Return
+}
+
+func (w WebhookTransactionSettledPayload) GetReference() string {
+	return w.Reference
+}
+
+func (w WebhookTransactionSettledPayload) GetAccountIdentifier() string {
+	return w.Account.IBAN
+}
+
+func (w WebhookTransactionSettledPayload) GetAccountOwner() string {
+	return w.Account.OwnerName
+}
+
+func (w WebhookTransactionSettledPayload) GetCounterpartAccountIdentifier() string {
+	return w.CounterpartAccount.IBAN
+}
+
+func (w WebhookTransactionSettledPayload) GetCounterpartAccountOwner() string {
+	return w.CounterpartAccount.TransactionOwnerName
+}
+
+var _ Transaction = (*WebhookTransactionRejectedPayload)(nil)
+
 // WebhookTransactionRejectedPayload
 // This webhook confirms the payment has been rejected
 type WebhookTransactionRejectedPayload struct {
@@ -83,6 +130,49 @@ type WebhookTransactionRejectedPayload struct {
 	CancellationCode      string             `json:"CancellationCode"`
 	Account               TransactionAccount `json:"Account" validate:"required"`
 	CounterpartAccount    TransactionAccount `json:"CounterpartAccount" validate:"required"`
+}
+
+func (w WebhookTransactionRejectedPayload) GetID() uuid.UUID {
+	return w.TransactionID
+}
+
+func (w WebhookTransactionRejectedPayload) GetEndToEndID() string {
+	return w.EndToEndTransactionID
+}
+
+func (w WebhookTransactionRejectedPayload) GetCurrency() string {
+	return w.CurrencyCode
+}
+
+func (w WebhookTransactionRejectedPayload) GetAmount() float64 {
+	if w.DebitCreditCode == DebitCreditCodeDebit {
+		return -w.Amount
+	}
+	return w.Amount
+}
+
+func (w WebhookTransactionRejectedPayload) IsReturn() bool {
+	return w.Return
+}
+
+func (w WebhookTransactionRejectedPayload) GetReference() string {
+	return w.Reference
+}
+
+func (w WebhookTransactionRejectedPayload) GetAccountIdentifier() string {
+	return w.Account.IBAN
+}
+
+func (w WebhookTransactionRejectedPayload) GetAccountOwner() string {
+	return w.Account.OwnerName
+}
+
+func (w WebhookTransactionRejectedPayload) GetCounterpartAccountIdentifier() string {
+	return w.CounterpartAccount.IBAN
+}
+
+func (w WebhookTransactionRejectedPayload) GetCounterpartAccountOwner() string {
+	return w.CounterpartAccount.TransactionOwnerName
 }
 
 // WebhookPaymentMessageAssesmentFailedPayload

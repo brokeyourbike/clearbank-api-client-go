@@ -30,6 +30,8 @@ type WebhookMCTransactionCreatedPayload struct {
 	AdditionalProperties               []AdditionalProperty `json:"AdditionalProperties" validate:"required"`
 }
 
+var _ Transaction = (*WebhookMCTransactionSettledPayload)(nil)
+
 // WebhookMCTransactionSettledPayload
 // This webhook confirms that a multicurrency transaction has been settled
 type WebhookMCTransactionSettledPayload struct {
@@ -52,6 +54,66 @@ type WebhookMCTransactionSettledPayload struct {
 	AdditionalProperties               []AdditionalProperty `json:"AdditionalProperties" validate:"required"`
 }
 
+func (w WebhookMCTransactionSettledPayload) GetID() uuid.UUID {
+	return w.TransactionID
+}
+
+func (w WebhookMCTransactionSettledPayload) GetEndToEndID() string {
+	return w.EndToEndID
+}
+
+func (w WebhookMCTransactionSettledPayload) GetCurrency() string {
+	return w.InstructedCurrency
+}
+
+func (w WebhookMCTransactionSettledPayload) GetAmount() float64 {
+	return w.InstructedAmount
+}
+
+func (w WebhookMCTransactionSettledPayload) IsReturn() bool {
+	return false
+}
+
+func (w WebhookMCTransactionSettledPayload) GetReference() string {
+	return w.Reference
+}
+
+func (w WebhookMCTransactionSettledPayload) GetAccountIdentifier() string {
+	if len(w.UltimateCreditorAccountIdentifiers) == 0 {
+		return ""
+	}
+	if w.InstructedAmount > 0 {
+		return w.UltimateCreditorAccountIdentifiers[0].Identifier
+	}
+	return w.UltimateDebtorAccountIdentifiers[0].Identifier
+}
+
+func (w WebhookMCTransactionSettledPayload) GetAccountOwner() string {
+	if w.InstructedAmount > 0 {
+		return w.UltimateCreditorName
+	}
+	return w.UltimateDebtorName
+}
+
+func (w WebhookMCTransactionSettledPayload) GetCounterpartAccountIdentifier() string {
+	if len(w.UltimateCreditorAccountIdentifiers) == 0 {
+		return ""
+	}
+	if w.InstructedAmount > 0 {
+		return w.UltimateDebtorAccountIdentifiers[0].Identifier
+	}
+	return w.UltimateCreditorAccountIdentifiers[0].Identifier
+}
+
+func (w WebhookMCTransactionSettledPayload) GetCounterpartAccountOwner() string {
+	if w.InstructedAmount > 0 {
+		return w.UltimateDebtorName
+	}
+	return w.UltimateCreditorName
+}
+
+var _ Transaction = (*WebhookMCTransactionCancelledPayload)(nil)
+
 // WebhookMCTransactionCancelledPayload
 // This webhook confirms that a multicurrency transaction has been canceled
 type WebhookMCTransactionCancelledPayload struct {
@@ -72,6 +134,64 @@ type WebhookMCTransactionCancelledPayload struct {
 	TimestampCancelled                 clearbank.Time   `json:"TimestampCancelled" validate:"required"`
 	CancellationCode                   string           `json:"CancellationCode" validate:"required"`
 	CancellationReason                 string           `json:"CancellationReason" validate:"required"`
+}
+
+func (w WebhookMCTransactionCancelledPayload) GetID() uuid.UUID {
+	return w.TransactionID
+}
+
+func (w WebhookMCTransactionCancelledPayload) GetEndToEndID() string {
+	return w.EndToEndID
+}
+
+func (w WebhookMCTransactionCancelledPayload) GetCurrency() string {
+	return w.InstructedCurrency
+}
+
+func (w WebhookMCTransactionCancelledPayload) GetAmount() float64 {
+	return w.InstructedAmount
+}
+
+func (w WebhookMCTransactionCancelledPayload) IsReturn() bool {
+	return false
+}
+
+func (w WebhookMCTransactionCancelledPayload) GetReference() string {
+	return w.Reference
+}
+
+func (w WebhookMCTransactionCancelledPayload) GetAccountIdentifier() string {
+	if len(w.UltimateCreditorAccountIdentifiers) == 0 {
+		return ""
+	}
+	if w.InstructedAmount > 0 {
+		return w.UltimateCreditorAccountIdentifiers[0].Identifier
+	}
+	return w.UltimateDebtorAccountIdentifiers[0].Identifier
+}
+
+func (w WebhookMCTransactionCancelledPayload) GetAccountOwner() string {
+	if w.InstructedAmount > 0 {
+		return w.UltimateCreditorName
+	}
+	return w.UltimateDebtorName
+}
+
+func (w WebhookMCTransactionCancelledPayload) GetCounterpartAccountIdentifier() string {
+	if len(w.UltimateCreditorAccountIdentifiers) == 0 {
+		return ""
+	}
+	if w.InstructedAmount > 0 {
+		return w.UltimateDebtorAccountIdentifiers[0].Identifier
+	}
+	return w.UltimateCreditorAccountIdentifiers[0].Identifier
+}
+
+func (w WebhookMCTransactionCancelledPayload) GetCounterpartAccountOwner() string {
+	if w.InstructedAmount > 0 {
+		return w.UltimateDebtorName
+	}
+	return w.UltimateCreditorName
 }
 
 // WebhookMCPayloadAssessmentFailedPayload
