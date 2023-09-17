@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.3.0...v0.4.0) (2023-09-17)
+
+
+### Features
+
+* common trx info ([226b473](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/226b4732c0416e7cadc297e3a0ade853deb1e025))
+
 ## [0.3.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.2.1...v0.3.0) (2023-09-17)
 
 
