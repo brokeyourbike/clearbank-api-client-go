@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.3.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.2.1...v0.3.0) (2023-09-17)
+
+
+### Features
+
+* account webhooks time ([8d28985](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/8d28985ff5ad25c4e5086be43d4fd1de14dcc832))
+* accounts ([ad4e9b7](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/ad4e9b73a4a7f6ff95eed50dfe8a922b0d9a9a47))
+* client implement all ([c621d2b](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/c621d2b00a0f19e342c43b8f17dcccd3433514cc))
+* fx ([5227769](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/52277698004cd0a56732ae3b257ddab56dcb5db2))
+* mccy accounts ([dee76c8](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/dee76c8a5bab02ed34a73cbd6e1eae4e14fa03bd))
+* statement and validate err ([6528561](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/6528561508edaacda2f22a43414b14019e70ba4b))
+* trx ([ae8df26](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/ae8df26a8ff97ce805138826884f30c89e0641a3))
+* trx ([d57f3c8](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/d57f3c8ab5ff9290a433b77b304160a1ffd8d8dc))
+* webhook ([037cb2f](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/037cb2fbc5b783d5d60c1bceaa6b4b36c0232e82))
+
+
+### Bug Fixes
+
+* add data ([2f84313](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/2f843137bf79c9da784f51fcadf555862914dedb))
+* add resp ([66fc04e](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/66fc04ec38dc69f4b2ee10952f8cc8068edcf3fa))
+* rename to err ([f259071](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/f259071f9a6a58259178ab2a4edb37fad17e98fe))
+* update deps ([1d8b5ce](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/1d8b5ce0866c9fc55eaaf6d92654d7eeb13a8ab6))
+
 ### [0.2.1](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.2.0...v0.2.1) (2023-08-29)
 
 
