@@ -1,6 +1,9 @@
 package webhook
 
-import "github.com/google/uuid"
+import (
+	"github.com/brokeyourbike/clearbank-api-client-go"
+	"github.com/google/uuid"
+)
 
 type AccountType string
 
@@ -22,8 +25,8 @@ type WebhookAccountCreatedPayload struct {
 		IBAN string `json:"IBAN" validate:"required"`
 		BBAN string `json:"BBAN" validate:"required"`
 	} `json:"AccountIdentifiers" validate:"required"`
-	TimestampCreated string      `json:"TimestampCreated" validate:"required"`
-	AccountType      AccountType `json:"AccountType" validate:"required"`
+	TimestampCreated clearbank.Time `json:"TimestampCreated" validate:"required"`
+	AccountType      AccountType    `json:"AccountType" validate:"required"`
 }
 
 type DisabledReason string
@@ -37,7 +40,7 @@ const (
 type WebhookAccountDisabledPayload struct {
 	AccountID         uuid.UUID      `json:"AccountId" validate:"required"`
 	DisabledReason    DisabledReason `json:"DisabledReason" validate:"required"`
-	DisabledTimestamp string         `json:"DisabledTimestamp" validate:"required"`
+	DisabledTimestamp clearbank.Time `json:"DisabledTimestamp" validate:"required"`
 }
 
 // WebhookVirtualAccountCreationFailedPayload
@@ -52,5 +55,5 @@ type WebhookVirtualAccountCreationFailedPayload struct {
 	} `json:"AccountIdentifier" validate:"required"`
 	Errors           map[string]string `json:"Errors" validate:"required"`
 	OwnerName        string            `json:"OwnerName"`
-	TimestampCreated string            `json:"TimestampCreated" validate:"required"`
+	TimestampCreated clearbank.Time    `json:"TimestampCreated" validate:"required"`
 }
