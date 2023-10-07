@@ -13,8 +13,8 @@ import (
 //go:embed testdata/Mccy.InternalTransfers.Settled.json
 var mccy_InternalTransfers_Settled []byte
 
-func TestWebhookMCInternalTransfersSettledPayload(t *testing.T) {
-	var p webhook.WebhookMCInternalTransfersSettledPayload
+func TestMCCYInternalTransfersSettledPayload(t *testing.T) {
+	var p webhook.MCCYInternalTransfersSettledPayload
 	err := json.Unmarshal(mccy_InternalTransfers_Settled, &p)
 	require.NoError(t, err)
 

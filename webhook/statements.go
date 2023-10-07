@@ -1,8 +1,8 @@
 package webhook
 
-// WebhookMCInstitutionStatementPayload
+// MCCYInstitutionStatementPayload
 // This webhook allows you to download a statement for all accounts associated with your institution
-type WebhookMCInstitutionStatementPayload struct {
+type MCCYInstitutionStatementPayload struct {
 	URI            string `json:"Uri" validate:"required"`
 	ValidUntilDate string `json:"ValidUntilDate" validate:"required"`
 	Year           int    `json:"Year" validate:"required"`
@@ -11,9 +11,9 @@ type WebhookMCInstitutionStatementPayload struct {
 	Format         string `json:"Format" validate:"required"`
 }
 
-// WebhookMCAccountStatementPayload
+// MCCYAccountStatementPayload
 // This webhook allows you to download a statement for a specific account associated with your institution
-type WebhookMCAccountStatementPayload struct {
+type MCCYAccountStatementPayload struct {
 	URI            string `json:"Uri" validate:"required"`
 	ValidUntilDate string `json:"ValidUntilDate" validate:"required"`
 	Year           int    `json:"Year" validate:"required"`

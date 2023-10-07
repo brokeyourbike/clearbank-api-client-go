@@ -36,12 +36,11 @@ type TransactionAccount struct {
 	InstitutionName      string `json:"InstitutionName"`
 }
 
-var _ Transaction = (*WebhookTransactionSettledPayload)(nil)
+var _ Transaction = (*TransactionSettledPayload)(nil)
 
-// TODO: remove "Webhook" form the name
-// WebhookTransactionSettledPayload
+// TransactionSettledPayload
 // This sends a webhook notification confirming the transaction has settled
-type WebhookTransactionSettledPayload struct {
+type TransactionSettledPayload struct {
 	TransactionID               uuid.UUID          `json:"TransactionId" validate:"required"`
 	Status                      TransactionStatus  `json:"Status" validate:"required"`
 	Scheme                      TransactionScheme  `json:"Scheme" validate:"required"`
@@ -69,54 +68,54 @@ type WebhookTransactionSettledPayload struct {
 	} `json:"SupplementaryData"`
 }
 
-func (w WebhookTransactionSettledPayload) GetID() uuid.UUID {
+func (w TransactionSettledPayload) GetID() uuid.UUID {
 	return w.TransactionID
 }
 
-func (w WebhookTransactionSettledPayload) GetEndToEndID() string {
+func (w TransactionSettledPayload) GetEndToEndID() string {
 	return w.EndToEndTransactionID
 }
 
-func (w WebhookTransactionSettledPayload) GetCurrency() string {
+func (w TransactionSettledPayload) GetCurrency() string {
 	return w.CurrencyCode
 }
 
-func (w WebhookTransactionSettledPayload) GetAmount() float64 {
+func (w TransactionSettledPayload) GetAmount() float64 {
 	if w.DebitCreditCode == DebitCreditCodeDebit {
 		return -w.Amount
 	}
 	return w.Amount
 }
 
-func (w WebhookTransactionSettledPayload) IsReturn() bool {
+func (w TransactionSettledPayload) IsReturn() bool {
 	return w.Return
 }
 
-func (w WebhookTransactionSettledPayload) GetReference() string {
+func (w TransactionSettledPayload) GetReference() string {
 	return w.Reference
 }
 
-func (w WebhookTransactionSettledPayload) GetAccountIdentifier() string {
+func (w TransactionSettledPayload) GetAccountIdentifier() string {
 	return w.Account.IBAN
 }
 
-func (w WebhookTransactionSettledPayload) GetAccountOwner() string {
+func (w TransactionSettledPayload) GetAccountOwner() string {
 	return w.Account.OwnerName
 }
 
-func (w WebhookTransactionSettledPayload) GetCounterpartAccountIdentifier() string {
+func (w TransactionSettledPayload) GetCounterpartAccountIdentifier() string {
 	return w.CounterpartAccount.IBAN
 }
 
-func (w WebhookTransactionSettledPayload) GetCounterpartAccountOwner() string {
+func (w TransactionSettledPayload) GetCounterpartAccountOwner() string {
 	return w.CounterpartAccount.TransactionOwnerName
 }
 
-var _ Transaction = (*WebhookTransactionRejectedPayload)(nil)
+var _ Transaction = (*TransactionRejectedPayload)(nil)
 
-// WebhookTransactionRejectedPayload
+// TransactionRejectedPayload
 // This webhook confirms the payment has been rejected
-type WebhookTransactionRejectedPayload struct {
+type TransactionRejectedPayload struct {
 	TransactionID         uuid.UUID          `json:"TransactionId" validate:"required"`
 	Status                TransactionStatus  `json:"Status" validate:"required"`
 	Scheme                TransactionScheme  `json:"Scheme" validate:"required"`
@@ -133,52 +132,52 @@ type WebhookTransactionRejectedPayload struct {
 	CounterpartAccount    TransactionAccount `json:"CounterpartAccount" validate:"required"`
 }
 
-func (w WebhookTransactionRejectedPayload) GetID() uuid.UUID {
+func (w TransactionRejectedPayload) GetID() uuid.UUID {
 	return w.TransactionID
 }
 
-func (w WebhookTransactionRejectedPayload) GetEndToEndID() string {
+func (w TransactionRejectedPayload) GetEndToEndID() string {
 	return w.EndToEndTransactionID
 }
 
-func (w WebhookTransactionRejectedPayload) GetCurrency() string {
+func (w TransactionRejectedPayload) GetCurrency() string {
 	return w.CurrencyCode
 }
 
-func (w WebhookTransactionRejectedPayload) GetAmount() float64 {
+func (w TransactionRejectedPayload) GetAmount() float64 {
 	if w.DebitCreditCode == DebitCreditCodeDebit {
 		return -w.Amount
 	}
 	return w.Amount
 }
 
-func (w WebhookTransactionRejectedPayload) IsReturn() bool {
+func (w TransactionRejectedPayload) IsReturn() bool {
 	return w.Return
 }
 
-func (w WebhookTransactionRejectedPayload) GetReference() string {
+func (w TransactionRejectedPayload) GetReference() string {
 	return w.Reference
 }
 
-func (w WebhookTransactionRejectedPayload) GetAccountIdentifier() string {
+func (w TransactionRejectedPayload) GetAccountIdentifier() string {
 	return w.Account.IBAN
 }
 
-func (w WebhookTransactionRejectedPayload) GetAccountOwner() string {
+func (w TransactionRejectedPayload) GetAccountOwner() string {
 	return w.Account.OwnerName
 }
 
-func (w WebhookTransactionRejectedPayload) GetCounterpartAccountIdentifier() string {
+func (w TransactionRejectedPayload) GetCounterpartAccountIdentifier() string {
 	return w.CounterpartAccount.IBAN
 }
 
-func (w WebhookTransactionRejectedPayload) GetCounterpartAccountOwner() string {
+func (w TransactionRejectedPayload) GetCounterpartAccountOwner() string {
 	return w.CounterpartAccount.TransactionOwnerName
 }
 
-// WebhookPaymentMessageAssesmentFailedPayload
+// PaymentMessageAssesmentFailedPayload
 // This webhook confirms the payment assessment has failed
-type WebhookPaymentMessageAssesmentFailedPayload struct {
+type PaymentMessageAssesmentFailedPayload struct {
 	MessageID         uuid.UUID         `json:"MessageId" validate:"required"`
 	PaymentMethodType TransactionScheme `json:"PaymentMethodType" validate:"required"`
 	AssesmentFailures []struct {
@@ -200,9 +199,9 @@ type WebhookPaymentMessageAssesmentFailedPayload struct {
 	} `json:"AccountIdentification" validate:"required"`
 }
 
-// WebhookPaymentMessageValidationFailedPayload
+// PaymentMessageValidationFailedPayload
 // This webhook confirms the payment validation has failed
-type WebhookPaymentMessageValidationFailedPayload struct {
+type PaymentMessageValidationFailedPayload struct {
 	MessageID          uuid.UUID         `json:"MessageId" validate:"required"`
 	PaymentMethodType  TransactionScheme `json:"PaymentMethodType" validate:"required"`
 	ValidationFailures []struct {

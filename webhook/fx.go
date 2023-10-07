@@ -5,9 +5,9 @@ import (
 	"github.com/google/uuid"
 )
 
-// WebhookFxTradeExecutedPayload
+// FxTradeExecutedPayload
 // This webhook confirms that the FX trade has been executed
-type WebhookFxTradeExecutedPayload struct {
+type FxTradeExecutedPayload struct {
 	SellAccountOwner        string              `json:"SellAccountOwner" validate:"required"`
 	SellAccountIBAN         string              `json:"SellAccountIban" validate:"required"`
 	BuyAccountOwner         string              `json:"BuyAccountOwner" validate:"required"`
@@ -32,9 +32,9 @@ type WebhookFxTradeExecutedPayload struct {
 	ExecutedTime            clearbank.Time      `json:"ExecutedTime" validate:"required"`
 }
 
-// WebhookFxTradeSettledPayload
+// FxTradeSettledPayload
 // This webhook confirms that the FX trade has been settled
-type WebhookFxTradeSettledPayload struct {
+type FxTradeSettledPayload struct {
 	SellAccountOwner        string              `json:"SellAccountOwner" validate:"required"`
 	SellAccountIBAN         string              `json:"SellAccountIban" validate:"required"`
 	BuyAccountOwner         string              `json:"BuyAccountOwner" validate:"required"`
@@ -66,9 +66,9 @@ type WebhookFxTradeSettledPayload struct {
 	MarginSettledAt         string              `json:"MarginSettledAt"`
 }
 
-// WebhookFxTradeCancelledPayload
+// FxTradeCancelledPayload
 // This webhook confirms that the FX trade has been canceled
-type WebhookFxTradeCancelledPayload struct {
+type FxTradeCancelledPayload struct {
 	SellAccountOwner        string         `json:"SellAccountOwner" validate:"required"`
 	SellAccountIBAN         string         `json:"SellAccountIban" validate:"required"`
 	BuyAccountOwner         string         `json:"BuyAccountOwner" validate:"required"`

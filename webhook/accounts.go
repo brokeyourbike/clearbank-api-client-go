@@ -15,9 +15,9 @@ const (
 	AccountTypeInstitution      AccountType = "InstitutionAccount"
 )
 
-// WebhookAccountCreatedPayload
+// AccountCreatedPayload
 // This webhook confirms the account has been created
-type WebhookAccountCreatedPayload struct {
+type AccountCreatedPayload struct {
 	AccountID          uuid.UUID `json:"AccountId" validate:"required"`
 	AccountName        string    `json:"AccountName" validate:"required"`
 	AccountHolderLabel string    `json:"AccountHolderLabel" validate:"required"`
@@ -36,16 +36,16 @@ const (
 	DisabledReasonAccountSuspended DisabledReason = "AccountSuspended"
 )
 
-// WebhookAccountDisabledPayload
-type WebhookAccountDisabledPayload struct {
+// AccountDisabledPayload
+type AccountDisabledPayload struct {
 	AccountID         uuid.UUID      `json:"AccountId" validate:"required"`
 	DisabledReason    DisabledReason `json:"DisabledReason" validate:"required"`
 	DisabledTimestamp clearbank.Time `json:"DisabledTimestamp" validate:"required"`
 }
 
-// WebhookVirtualAccountCreationFailedPayload
+// VirtualAccountCreationFailedPayload
 // This webhook confirms a virtual account creation failure
-type WebhookVirtualAccountCreationFailedPayload struct {
+type VirtualAccountCreationFailedPayload struct {
 	AccountID         uuid.UUID `json:"AccountId" validate:"required"`
 	VirtualAccountID  uuid.UUID `json:"VirtualAccountId" validate:"required"`
 	AccountIdentifier struct {

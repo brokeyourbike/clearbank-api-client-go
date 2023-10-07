@@ -15,13 +15,13 @@ var transactionSettledWithSupplementary []byte
 //go:embed testdata/TransactionSettled-no-supplementary.json
 var transactionSettledNoSupplementary []byte
 
-func TestWebhookTransactionSettledPayload(t *testing.T) {
-	var d1 webhook.WebhookTransactionSettledPayload
+func TestTransactionSettledPayload(t *testing.T) {
+	var d1 webhook.TransactionSettledPayload
 	err := json.Unmarshal(transactionSettledWithSupplementary, &d1)
 	assert.NoError(t, err)
 	assert.Len(t, d1.SupplementaryData, 1)
 
-	var d2 webhook.WebhookTransactionSettledPayload
+	var d2 webhook.TransactionSettledPayload
 	err = json.Unmarshal(transactionSettledNoSupplementary, &d2)
 	assert.NoError(t, err)
 	assert.Len(t, d2.SupplementaryData, 0)

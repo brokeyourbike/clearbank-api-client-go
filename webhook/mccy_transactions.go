@@ -10,9 +10,9 @@ type AdditionalProperty struct {
 	Value string `json:"Value" validate:"required"`
 }
 
-// WebhookMCTransactionCreatedPayload
+// MCCYTransactionCreatedPayload
 // This webhook confirms that a multicurrency transaction has been created
-type WebhookMCTransactionCreatedPayload struct {
+type MCCYTransactionCreatedPayload struct {
 	TransactionID                      uuid.UUID            `json:"TransactionId" validate:"required"`
 	BatchID                            uuid.UUID            `json:"BatchId" validate:"required"`
 	EndToEndID                         string               `json:"EndToEndId" validate:"required"`
@@ -30,11 +30,11 @@ type WebhookMCTransactionCreatedPayload struct {
 	AdditionalProperties               []AdditionalProperty `json:"AdditionalProperties" validate:"required"`
 }
 
-var _ Transaction = (*WebhookMCTransactionSettledPayload)(nil)
+var _ Transaction = (*MCCYTransactionSettledPayload)(nil)
 
-// WebhookMCTransactionSettledPayload
+// MCCYTransactionSettledPayload
 // This webhook confirms that a multicurrency transaction has been settled
-type WebhookMCTransactionSettledPayload struct {
+type MCCYTransactionSettledPayload struct {
 	TransactionID                      uuid.UUID            `json:"TransactionId" validate:"required"`
 	BatchID                            uuid.UUID            `json:"BatchId" validate:"required"`
 	EndToEndID                         string               `json:"EndToEndId" validate:"required"`
@@ -54,31 +54,31 @@ type WebhookMCTransactionSettledPayload struct {
 	AdditionalProperties               []AdditionalProperty `json:"AdditionalProperties" validate:"required"`
 }
 
-func (w WebhookMCTransactionSettledPayload) GetID() uuid.UUID {
+func (w MCCYTransactionSettledPayload) GetID() uuid.UUID {
 	return w.TransactionID
 }
 
-func (w WebhookMCTransactionSettledPayload) GetEndToEndID() string {
+func (w MCCYTransactionSettledPayload) GetEndToEndID() string {
 	return w.EndToEndID
 }
 
-func (w WebhookMCTransactionSettledPayload) GetCurrency() string {
+func (w MCCYTransactionSettledPayload) GetCurrency() string {
 	return w.InstructedCurrency
 }
 
-func (w WebhookMCTransactionSettledPayload) GetAmount() float64 {
+func (w MCCYTransactionSettledPayload) GetAmount() float64 {
 	return w.InstructedAmount
 }
 
-func (w WebhookMCTransactionSettledPayload) IsReturn() bool {
+func (w MCCYTransactionSettledPayload) IsReturn() bool {
 	return false
 }
 
-func (w WebhookMCTransactionSettledPayload) GetReference() string {
+func (w MCCYTransactionSettledPayload) GetReference() string {
 	return w.Reference
 }
 
-func (w WebhookMCTransactionSettledPayload) GetAccountIdentifier() string {
+func (w MCCYTransactionSettledPayload) GetAccountIdentifier() string {
 	if len(w.UltimateCreditorAccountIdentifiers) == 0 {
 		return ""
 	}
@@ -88,14 +88,14 @@ func (w WebhookMCTransactionSettledPayload) GetAccountIdentifier() string {
 	return w.UltimateDebtorAccountIdentifiers[0].Identifier
 }
 
-func (w WebhookMCTransactionSettledPayload) GetAccountOwner() string {
+func (w MCCYTransactionSettledPayload) GetAccountOwner() string {
 	if w.InstructedAmount > 0 {
 		return w.UltimateCreditorName
 	}
 	return w.UltimateDebtorName
 }
 
-func (w WebhookMCTransactionSettledPayload) GetCounterpartAccountIdentifier() string {
+func (w MCCYTransactionSettledPayload) GetCounterpartAccountIdentifier() string {
 	if len(w.UltimateCreditorAccountIdentifiers) == 0 {
 		return ""
 	}
@@ -105,18 +105,18 @@ func (w WebhookMCTransactionSettledPayload) GetCounterpartAccountIdentifier() st
 	return w.UltimateCreditorAccountIdentifiers[0].Identifier
 }
 
-func (w WebhookMCTransactionSettledPayload) GetCounterpartAccountOwner() string {
+func (w MCCYTransactionSettledPayload) GetCounterpartAccountOwner() string {
 	if w.InstructedAmount > 0 {
 		return w.UltimateDebtorName
 	}
 	return w.UltimateCreditorName
 }
 
-var _ Transaction = (*WebhookMCTransactionCancelledPayload)(nil)
+var _ Transaction = (*MCCYTransactionCancelledPayload)(nil)
 
-// WebhookMCTransactionCancelledPayload
+// MCCYTransactionCancelledPayload
 // This webhook confirms that a multicurrency transaction has been canceled
-type WebhookMCTransactionCancelledPayload struct {
+type MCCYTransactionCancelledPayload struct {
 	TransactionID                      uuid.UUID        `json:"TransactionId" validate:"required"`
 	BatchID                            uuid.UUID        `json:"BatchId" validate:"required"`
 	EndToEndID                         string           `json:"EndToEndId" validate:"required"`
@@ -136,31 +136,31 @@ type WebhookMCTransactionCancelledPayload struct {
 	CancellationReason                 string           `json:"CancellationReason" validate:"required"`
 }
 
-func (w WebhookMCTransactionCancelledPayload) GetID() uuid.UUID {
+func (w MCCYTransactionCancelledPayload) GetID() uuid.UUID {
 	return w.TransactionID
 }
 
-func (w WebhookMCTransactionCancelledPayload) GetEndToEndID() string {
+func (w MCCYTransactionCancelledPayload) GetEndToEndID() string {
 	return w.EndToEndID
 }
 
-func (w WebhookMCTransactionCancelledPayload) GetCurrency() string {
+func (w MCCYTransactionCancelledPayload) GetCurrency() string {
 	return w.InstructedCurrency
 }
 
-func (w WebhookMCTransactionCancelledPayload) GetAmount() float64 {
+func (w MCCYTransactionCancelledPayload) GetAmount() float64 {
 	return w.InstructedAmount
 }
 
-func (w WebhookMCTransactionCancelledPayload) IsReturn() bool {
+func (w MCCYTransactionCancelledPayload) IsReturn() bool {
 	return false
 }
 
-func (w WebhookMCTransactionCancelledPayload) GetReference() string {
+func (w MCCYTransactionCancelledPayload) GetReference() string {
 	return w.Reference
 }
 
-func (w WebhookMCTransactionCancelledPayload) GetAccountIdentifier() string {
+func (w MCCYTransactionCancelledPayload) GetAccountIdentifier() string {
 	if len(w.UltimateCreditorAccountIdentifiers) == 0 {
 		return ""
 	}
@@ -170,14 +170,14 @@ func (w WebhookMCTransactionCancelledPayload) GetAccountIdentifier() string {
 	return w.UltimateDebtorAccountIdentifiers[0].Identifier
 }
 
-func (w WebhookMCTransactionCancelledPayload) GetAccountOwner() string {
+func (w MCCYTransactionCancelledPayload) GetAccountOwner() string {
 	if w.InstructedAmount > 0 {
 		return w.UltimateCreditorName
 	}
 	return w.UltimateDebtorName
 }
 
-func (w WebhookMCTransactionCancelledPayload) GetCounterpartAccountIdentifier() string {
+func (w MCCYTransactionCancelledPayload) GetCounterpartAccountIdentifier() string {
 	if len(w.UltimateCreditorAccountIdentifiers) == 0 {
 		return ""
 	}
@@ -187,16 +187,16 @@ func (w WebhookMCTransactionCancelledPayload) GetCounterpartAccountIdentifier() 
 	return w.UltimateCreditorAccountIdentifiers[0].Identifier
 }
 
-func (w WebhookMCTransactionCancelledPayload) GetCounterpartAccountOwner() string {
+func (w MCCYTransactionCancelledPayload) GetCounterpartAccountOwner() string {
 	if w.InstructedAmount > 0 {
 		return w.UltimateDebtorName
 	}
 	return w.UltimateCreditorName
 }
 
-// WebhookMCPayloadAssessmentFailedPayload
+// MCCYPayloadAssessmentFailedPayload
 // This webhook confirms that a multicurrency payment has failed assessment
-type WebhookMCPayloadAssessmentFailedPayload struct {
+type MCCYPayloadAssessmentFailedPayload struct {
 	TransactionID                   uuid.UUID      `json:"TransactionId" validate:"required"`
 	BatchID                         uuid.UUID      `json:"BatchId" validate:"required"`
 	EndToEndID                      string         `json:"EndToEndId" validate:"required"`
@@ -223,9 +223,9 @@ type WebhookMCPayloadAssessmentFailedPayload struct {
 	UltimateCreditorCountryCode     string         `json:"UltimateCreditorCountryCode" validate:"required"`
 }
 
-// WebhookMCPayloadValidationFailedPayload
+// MCCYPayloadValidationFailedPayload
 // This webhook confirms that a multicurrency payment has failed validation
-type WebhookMCPayloadValidationFailedPayload struct {
+type MCCYPayloadValidationFailedPayload struct {
 	TransactionID                   uuid.UUID      `json:"TransactionId" validate:"required"`
 	BatchID                         uuid.UUID      `json:"BatchId" validate:"required"`
 	EndToEndID                      string         `json:"EndToEndId" validate:"required"`

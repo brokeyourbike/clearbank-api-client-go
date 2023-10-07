@@ -19,9 +19,9 @@ type MCCYIdentifier struct {
 	Kind       IdentifierKind `json:"Kind" validate:"required"`
 }
 
-// WebhookMCAccountCreatedPayload
+// MCCYAccountCreatedPayload
 // This webhook confirms that the multicurrency account has been created
-type WebhookMCAccountCreatedPayload struct {
+type MCCYAccountCreatedPayload struct {
 	AccountID        uuid.UUID                   `json:"AccountId" validate:"required"`
 	Name             string                      `json:"Name" validate:"required"`
 	Label            string                      `json:"Label" validate:"required"`
@@ -36,9 +36,9 @@ type WebhookMCAccountCreatedPayload struct {
 	Type             string                      `json:"Type" validate:"required"`
 }
 
-// WebhookMCAccountUpdatedPayload
+// MCCYAccountUpdatedPayload
 // This webhook confirms that the multicurrency account has been updated
-type WebhookMCAccountUpdatedPayload struct {
+type MCCYAccountUpdatedPayload struct {
 	AccountID         uuid.UUID                   `json:"AccountId" validate:"required"`
 	Name              string                      `json:"Name" validate:"required"`
 	Label             string                      `json:"Label" validate:"required"`
@@ -56,9 +56,9 @@ type WebhookMCAccountUpdatedPayload struct {
 	Type              string                      `json:"Type" validate:"required"`
 }
 
-// WebhookMCVirtualAccountCreatedPayload
+// MCCYVirtualAccountCreatedPayload
 // This webhook confirms that the multicurrency virtual account has been created
-type WebhookMCVirtualAccountCreatedPayload struct {
+type MCCYVirtualAccountCreatedPayload struct {
 	AccountID        uuid.UUID                   `json:"AccountId" validate:"required"`
 	VirtualAccountID uuid.UUID                   `json:"VirtualAccountId" validate:"required"`
 	BatchID          uuid.UUID                   `json:"BatchId" validate:"required"`
@@ -68,9 +68,9 @@ type WebhookMCVirtualAccountCreatedPayload struct {
 	TimestampCreated clearbank.Time              `json:"TimestampCreated" validate:"required"`
 }
 
-// WebhookMCVirtualAccountUpdatedPayload
+// MCCYVirtualAccountUpdatedPayload
 // This webhook confirms that the multicurrency virtual account has been updated
-type WebhookMCVirtualAccountUpdatedPayload struct {
+type MCCYVirtualAccountUpdatedPayload struct {
 	AccountID         uuid.UUID                   `json:"AccountId" validate:"required"`
 	VirtualAccountID  uuid.UUID                   `json:"VirtualAccountId" validate:"required"`
 	Owner             string                      `json:"Owner" validate:"required"`
