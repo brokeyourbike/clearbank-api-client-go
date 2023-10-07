@@ -56,8 +56,7 @@ func TestFetchMarketrate_Fail(t *testing.T) {
 func TestFetchMarketrate_FailedHttpRequest(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
-
-	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(&http.Response{}, errors.New("cannot do")).Once()
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(nil, errors.New("cannot do")).Once()
 
 	_, err := client.FetchMarketrate(context.TODO(), clearbank.MarketrateParams{FixedSide: clearbank.FixedSideBuy})
 	assert.Error(t, err)
@@ -91,8 +90,7 @@ func TestNegotiate_ValidationFailed(t *testing.T) {
 func TestNegotiate_FailedHttpRequest(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
-
-	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(&http.Response{}, errors.New("cannot do")).Once()
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(nil, errors.New("cannot do")).Once()
 
 	_, err := client.Negotiate(context.TODO())
 	assert.Error(t, err)

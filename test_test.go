@@ -53,8 +53,7 @@ func TestTest(t *testing.T) {
 func TestFailedHttpRequest(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", local.NewNilSigner(), clearbank.WithHTTPClient(mockHttpClient))
-
-	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(&http.Response{}, errors.New("cannot do")).Once()
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(nil, errors.New("cannot do")).Once()
 
 	assert.Error(t, client.Test(context.TODO(), "hello!"))
 }
