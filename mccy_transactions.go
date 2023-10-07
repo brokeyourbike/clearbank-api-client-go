@@ -11,6 +11,7 @@ import (
 type MCCYTransactionsClient interface {
 	InitiateInternalTransaction(context.Context, CreateInternalTransactionPayload) error
 	InitiateMCCYTransactions(context.Context, CreateMCCYTransactionsPayload) error
+	InitiateMCCYInboundPayment(ctx context.Context, accountUniqueID string, payload CreateMCCYInboundPaymentPayload) (MCCYInboundPaymentResponse, error)
 	FetchMCCYTransaction(ctx context.Context, trxID uuid.UUID) (MCCYTransactionResponse, error)
 	FetchMCCYTransactionsForAccount(ctx context.Context, accountID uuid.UUID, currency string, params FetchTransactionsParams) (MCCYTransactionsResponse, error)
 	FetchMCCYTransactionsForVirtualAccount(ctx context.Context, virtualAccountID uuid.UUID, currency string, params FetchTransactionsParams) (MCCYTransactionsResponse, error)
@@ -169,6 +170,64 @@ func (c *client) InitiateMCCYTransactions(ctx context.Context, payload CreateMCC
 
 	req.ExpectStatus(http.StatusAccepted)
 	return c.do(ctx, req)
+}
+
+type CreateMCCYInboundPaymentPayload struct {
+	// Currency of the instructed payment. This is the three-letter ISO currency code.
+	InstructedCurrency string `json:"instructedCurrency"`
+
+	// Instructed payment amount.
+	InstructedAmount float64 `json:"instructedAmount"`
+
+	// Reference provided by the ultimate debtor for the payment.
+	Reference string `json:"reference"`
+
+	// Unique identifier supplied by you in your API request to simulate the sending bank’s reference.
+	EndToEndId string `json:"endToEndId"`
+
+	// Information about the ultimate creditor of the transaction.
+	UltimateCreditor struct {
+		// Ultimate creditor’s International Bank Account Number.
+		IBAN string `json:"iban"`
+		// Ultimate Creditor Name.
+		Name string `json:"name"`
+		// Ultimate creditor’s address.
+		Address string `json:"address"`
+	} `json:"ultimateCreditor"`
+
+	// Information about the ultimate debtor of the transaction.
+	UltimateDebtor struct {
+		// Ultimate debtor’s unique identifier value. This can only be an IBAN or BIC.
+		Identifier string `json:"identifier"`
+		// Ultimate Creditor Name.
+		Name string `json:"name"`
+		// Ultimate creditor’s address.
+		Address string `json:"address"`
+	} `json:"ultimateDebtor"`
+}
+
+type MCCYInboundPaymentResponse struct {
+	TransactionID            uuid.UUID `json:"transactionId"`
+	InstructedCurrency       string    `json:"instructedCurrency"`
+	InstructedAmount         float64   `json:"instructedAmount"`
+	Reference                string    `json:"reference"`
+	EndToEndID               string    `json:"endToEndId"`
+	UltimateCreditorIBAN     string    `json:"ultimateCreditorIBAN"`
+	UltimateCreditorName     string    `json:"ultimateCreditorName"`
+	UltimateDebtorIdentifier string    `json:"ultimateDebtorIdentifier"`
+	UltimateDebtorName       string    `json:"ultimateDebtorName"`
+	TimestampCreated         Time      `json:"timestampCreated"`
+	BankRefSearchable        string    `json:"bankRefSearchable"`
+}
+
+func (c *client) InitiateMCCYInboundPayment(ctx context.Context, accountUniqueID string, payload CreateMCCYInboundPaymentPayload) (data MCCYInboundPaymentResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPost, fmt.Sprintf("/v1/mccy/inboundpayment/%s", accountUniqueID), payload)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusCreated)
+	return data, c.do(ctx, req)
 }
 
 type MCCYTransactionStatus string
