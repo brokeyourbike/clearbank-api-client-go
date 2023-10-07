@@ -1,0 +1,40 @@
+{
+    "account": {
+        "id": "a85002e3-0116-4b14-b7fa-427e60f4f6bc",
+        "name": "string",
+        "label": "string",
+        "type": "CACC",
+        "currency": [
+            "AED"
+        ],
+        "balances": [
+            {
+                "name": "string",
+                "amount": 0,
+                "currency": "AED",
+                "status": "CLBD",
+                "lastCommittedTransaction": "string"
+            }
+        ],
+        "minimumBalance": {
+            "name": "string",
+            "amount": 0,
+            "currency": "AED",
+            "status": "CLBD",
+            "lastCommittedTransaction": "string"
+        },
+        "status": "NotProvided",
+        "statusReason": "NotProvided",
+        "iban": "string",
+        "bban": "string",
+        "upic": "string",
+        "cuid": "string"
+    },
+    "halLinks": [
+        {
+            "name": "string",
+            "href": "string",
+            "templated": true
+        }
+    ]
+}
