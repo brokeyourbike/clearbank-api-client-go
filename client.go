@@ -93,8 +93,10 @@ func (c *client) newRequest(ctx context.Context, method, url string, body interf
 	}
 
 	var b []byte
+	var requestID string
 
-	if req.Method == http.MethodPost || req.Method == http.MethodPatch {
+	switch req.Method {
+	case http.MethodPut, http.MethodPost, http.MethodPatch, http.MethodDelete:
 		b, err = json.Marshal(body)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal payload: %w", err)
@@ -107,21 +109,22 @@ func (c *client) newRequest(ctx context.Context, method, url string, body interf
 
 		req.Body = io.NopCloser(bytes.NewReader(b))
 		req.Header.Set("DigitalSignature", string(signature))
+
+		requestID = RequestIdFromContext(ctx)
+		req.Header.Set("X-Request-Id", requestID)
 	}
-
-	requestID := RequestIdFromContext(ctx)
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Request-Id", requestID)
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.token))
 
 	if c.logger != nil {
 		c.logger.WithContext(ctx).WithFields(logrus.Fields{
+			"http.request.method":             req.Method,
+			"http.request.url":                req.URL.String(),
 			"http.request.body.content":       string(b),
 			"http.request.headers.request_id": requestID,
 		}).Debug("clearbank.client -> request")
 	}
 
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.token))
 	return NewRequest(req), nil
 }
 
