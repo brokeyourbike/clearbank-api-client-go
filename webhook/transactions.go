@@ -38,6 +38,7 @@ type TransactionAccount struct {
 
 var _ Transaction = (*WebhookTransactionSettledPayload)(nil)
 
+// TODO: remove "Webhook" form the name
 // WebhookTransactionSettledPayload
 // This sends a webhook notification confirming the transaction has settled
 type WebhookTransactionSettledPayload struct {

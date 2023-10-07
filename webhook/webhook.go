@@ -34,14 +34,14 @@ const (
 	FxTradeCancelled               = "Fx.Trade.Cancelled"
 )
 
-type WebhookRequest struct {
+type Request struct {
 	Type    string          `json:"Type"`
 	Version int             `json:"Version"`
 	Nonce   int             `json:"Nonce"`
 	Payload json.RawMessage `json:"Payload"`
 }
 
-type WebhookResponse struct {
+type Response struct {
 	// The value that you receive in the webhook request.
 	Nonce int `json:"Nonce"`
 }
