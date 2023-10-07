@@ -8,7 +8,7 @@ import (
 
 type SubscriptionRequest struct {
 	Type    string `json:"Type"`
-	Version uint64 `json:"Version"`
+	Version int    `json:"Version"`
 	Payload struct {
 		CurrencyPair string `json:"CurrencyPair"`
 	} `json:"Payload"`
@@ -22,7 +22,7 @@ func NewSubscriptionRequest(symbol string) SubscriptionRequest {
 
 type MarketMessage struct {
 	Type    string          `json:"Type"`
-	Version uint64          `json:"Version"`
+	Version int             `json:"Version"`
 	Payload json.RawMessage `json:"Payload"`
 }
 
