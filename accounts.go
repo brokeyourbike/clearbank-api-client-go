@@ -96,13 +96,21 @@ func (c *client) FetchAccounts(ctx context.Context, pageNum int, pageSize int) (
 	return data, c.do(ctx, req)
 }
 
+type AccountUsageType string
+
+const (
+	AccountUsageTypeYourFunds            AccountUsageType = "YourFunds"
+	AccountUsageTypeSegregatedDesignated AccountUsageType = "SegregatedDesignated"
+	AccountUsageTypeSegregatedPooled     AccountUsageType = "SegregatedPooled"
+)
+
 type CreateAccountPayload struct {
 	Name  string `json:"accountName"`
 	Owner struct {
 		Name string `json:"name"`
 	} `json:"owner"`
-	SortCode  string `json:"sortCode"`
-	UsageType string `json:"usageType,omitempty"`
+	SortCode  string           `json:"sortCode"`
+	UsageType AccountUsageType `json:"usageType,omitempty"`
 }
 
 func (c *client) CreateAccount(ctx context.Context, payload CreateAccountPayload) (data AccountResponse, err error) {

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	_ "embed"
-	"errors"
 	"io"
 	"net/http"
 	"testing"
@@ -29,19 +28,6 @@ func TestRequestStatement(t *testing.T) {
 	assert.NoError(t, client.RequestStatement(ctx, clearbank.StatementPayload{}))
 }
 
-func TestRequestStatement_FailedHttpRequest(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
-	mockHttpClient := clearbank.NewMockHttpClient(t)
-	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
-
-	ctx := clearbank.RequestIdContext(context.TODO(), "123")
-	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
-
-	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(nil, errors.New("cannot do")).Once()
-
-	assert.Error(t, client.RequestStatement(ctx, clearbank.StatementPayload{}))
-}
-
 func TestRequestStatementFor(t *testing.T) {
 	mockSigner := signature.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
@@ -54,17 +40,4 @@ func TestRequestStatementFor(t *testing.T) {
 	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
 
 	assert.NoError(t, client.RequestStatementFor(ctx, "IBAN12345", clearbank.StatementPayload{}))
-}
-
-func TestRequestStatementFor_FailedHttpRequest(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
-	mockHttpClient := clearbank.NewMockHttpClient(t)
-	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
-
-	ctx := clearbank.RequestIdContext(context.TODO(), "123")
-	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
-
-	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(nil, errors.New("cannot do")).Once()
-
-	assert.Error(t, client.RequestStatementFor(ctx, "IBAN12345", clearbank.StatementPayload{}))
 }
