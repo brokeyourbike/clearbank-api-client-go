@@ -13,6 +13,7 @@ func TestTime(t *testing.T) {
 		value   string
 		wantErr bool
 	}{
+		{"unsupported", "2023-07-21", true},
 		{"TransactionSettled", "2023-07-21T12:07:11.317Z", false},
 		{"Fx.Trade.Executed", "2023-07-21T12:07:08Z", false},
 		{"Fx.Trade.Executed", "2023-07-21T12:07:11.0036686Z", false},
