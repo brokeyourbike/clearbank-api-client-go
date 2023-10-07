@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	_ "embed"
+	"errors"
 	"io"
 	"net/http"
 	"testing"
@@ -22,6 +23,9 @@ var marketrateFail []byte
 
 //go:embed testdata/negotiate-success.json
 var negotiateSuccess []byte
+
+//go:embed testdata/bad-request-invalid.json
+var badRequestInvalid []byte
 
 func TestFetchMarketrate(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
@@ -49,7 +53,17 @@ func TestFetchMarketrate_Fail(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestFetchNegotiate(t *testing.T) {
+func TestFetchMarketrate_FailedHttpRequest(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
+
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(&http.Response{}, errors.New("cannot do")).Once()
+
+	_, err := client.FetchMarketrate(context.TODO(), clearbank.MarketrateParams{FixedSide: clearbank.FixedSideBuy})
+	assert.Error(t, err)
+}
+
+func TestNegotiate(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
 
@@ -60,4 +74,26 @@ func TestFetchNegotiate(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, "https://example.com", got.URL)
+}
+
+func TestNegotiate_ValidationFailed(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
+
+	resp := &http.Response{StatusCode: 123, Body: io.NopCloser(bytes.NewReader(badRequestInvalid))}
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
+
+	_, err := client.Negotiate(context.TODO())
+	require.Error(t, err)
+	require.ErrorIs(t, err, clearbank.UnexpectedResponse{Status: 123, Body: "{}"}, "err response with no required fields is unexpected")
+}
+
+func TestNegotiate_FailedHttpRequest(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
+
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(&http.Response{}, errors.New("cannot do")).Once()
+
+	_, err := client.Negotiate(context.TODO())
+	assert.Error(t, err)
 }
