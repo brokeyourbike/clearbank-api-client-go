@@ -1,3 +1,5 @@
 exclude_patterns:
+- "mock_*.go"
 - "**/mock_*.go"
+- "*_test.go"
 - "**/*_test.go"
