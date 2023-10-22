@@ -17,6 +17,7 @@ type TransactionsClient interface {
 	FetchTransactions(ctx context.Context, params FetchTransactionsParams) (TransactionsResponse, error)
 	FetchTransactionForAccount(ctx context.Context, accountID uuid.UUID, trxID uuid.UUID) (TransactionResponse, error)
 	FetchTransactionsForAccount(ctx context.Context, accountID uuid.UUID, params FetchTransactionsParams) (TransactionsResponse, error)
+	FetchTransactionForVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, trxID uuid.UUID) (TransactionResponse, error)
 	FetchTransactionsForVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, params FetchTransactionsParams) (TransactionsResponse, error)
 }
 
