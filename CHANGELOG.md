@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.7.1](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.7.0...v0.7.1) (2023-10-22)
+
+
+### Bug Fixes
+
+* assessment webhooks ([488cf5e](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/488cf5e521a2ef0f4e47393f45a7a7542bf54fce))
+
 ## [0.7.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.6.0...v0.7.0) (2023-10-22)
 
 
