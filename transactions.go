@@ -15,6 +15,7 @@ type TransactionsClient interface {
 	InitiateCHAPSTransactions(context.Context, CreateTransactionsPayload) (TransactionsCreatedResponse, error)
 	InitiateFPSPaymentOriginatedOverseas(context.Context, CreateFPSPaymentOriginatedOverseasPayload) (TransactionsCreatedResponse, error)
 	FetchTransactions(ctx context.Context, params FetchTransactionsParams) (TransactionsResponse, error)
+	FetchTransactionForAccount(ctx context.Context, accountID uuid.UUID, trxID uuid.UUID) (TransactionResponse, error)
 	FetchTransactionsForAccount(ctx context.Context, accountID uuid.UUID, params FetchTransactionsParams) (TransactionsResponse, error)
 	FetchTransactionsForVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, params FetchTransactionsParams) (TransactionsResponse, error)
 }
@@ -347,6 +348,17 @@ func (c *client) FetchTransactions(ctx context.Context, params FetchTransactions
 	}
 
 	params.ApplyFor(req)
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+	return data, c.do(ctx, req)
+}
+
+func (c *client) FetchTransactionForAccount(ctx context.Context, accountID uuid.UUID, trxID uuid.UUID) (data TransactionResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/Transactions/%s", accountID.String(), trxID.String()), nil)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
 	req.ExpectStatus(http.StatusOK)
 	req.DecodeTo(&data)
 	return data, c.do(ctx, req)
