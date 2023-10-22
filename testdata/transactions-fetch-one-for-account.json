@@ -1,0 +1,52 @@
+{
+    "transaction": {
+        "amount": {
+            "instructedAmount": 100.00,
+            "currency": "GBP"
+        },
+        "counterpartAccount": {
+            "identification": {
+                "iban": "string",
+                "accountName": "string",
+                "sortCode": "string",
+                "accountNumber": "string",
+                "reference": "string",
+                "other": {
+                    "identification": "string",
+                    "schemeName": {
+                        "code": "BBAN",
+                        "proprietary": "string"
+                    },
+                    "issuer": "string"
+                }
+            }
+        },
+        "debitCreditCode": "CRDT",
+        "endToEndIdentifier": "string",
+        "transactionId": "6ea6dd13-eaad-4e1a-990c-6533a177dbb4",
+        "transactionReference": "string",
+        "transactionTime": "2019-08-24T14:15:22Z",
+        "status": "ACCP",
+        "ultimateBeneficiaryAccount": {
+            "id": "e98f9678-582f-4b12-979b-a6f9f6dc9ce7",
+            "iban": "string",
+            "bban": "string",
+            "upic": "string",
+            "cuid": "string"
+        },
+        "ultimateRemitterAccount": {
+            "id": "09998c4f-eef4-43f8-beb5-46cd879439fb",
+            "iban": "string",
+            "bban": "string",
+            "upic": "string",
+            "cuid": "string"
+        }
+    },
+    "halLinks": [
+        {
+            "name": "string",
+            "href": "string",
+            "templated": true
+        }
+    ]
+}

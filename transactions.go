@@ -17,6 +17,7 @@ type TransactionsClient interface {
 	FetchTransactions(ctx context.Context, params FetchTransactionsParams) (TransactionsResponse, error)
 	FetchTransactionForAccount(ctx context.Context, accountID uuid.UUID, trxID uuid.UUID) (TransactionResponse, error)
 	FetchTransactionsForAccount(ctx context.Context, accountID uuid.UUID, params FetchTransactionsParams) (TransactionsResponse, error)
+	FetchTransactionForVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, trxID uuid.UUID) (TransactionResponse, error)
 	FetchTransactionsForVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, params FetchTransactionsParams) (TransactionsResponse, error)
 }
 
@@ -307,7 +308,7 @@ func (p FetchTransactionsParams) ApplyFor(req *request) {
 	}
 }
 
-type TransactionResponse struct {
+type TransactionResponseData struct {
 	Amount struct {
 		InstructedAmount float64 `json:"instructedAmount"`
 		Currency         string  `json:"currency"`
@@ -337,8 +338,12 @@ type TransactionResponse struct {
 	} `json:"ultimateRemitterAccount"`
 }
 
+type TransactionResponse struct {
+	Transaction TransactionResponseData `json:"transaction"`
+}
+
 type TransactionsResponse struct {
-	Transactions []TransactionResponse `json:"transactions"`
+	Transactions []TransactionResponseData `json:"transactions"`
 }
 
 func (c *client) FetchTransactions(ctx context.Context, params FetchTransactionsParams) (data TransactionsResponse, err error) {
@@ -354,7 +359,7 @@ func (c *client) FetchTransactions(ctx context.Context, params FetchTransactions
 }
 
 func (c *client) FetchTransactionForAccount(ctx context.Context, accountID uuid.UUID, trxID uuid.UUID) (data TransactionResponse, err error) {
-	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/Transactions/%s", accountID.String(), trxID.String()), nil)
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/Transactions/%s", accountID, trxID), nil)
 	if err != nil {
 		return data, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -365,7 +370,7 @@ func (c *client) FetchTransactionForAccount(ctx context.Context, accountID uuid.
 }
 
 func (c *client) FetchTransactionsForAccount(ctx context.Context, accountID uuid.UUID, params FetchTransactionsParams) (data TransactionsResponse, err error) {
-	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/Transactions", accountID.String()), nil)
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/Transactions", accountID), nil)
 	if err != nil {
 		return data, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -377,12 +382,23 @@ func (c *client) FetchTransactionsForAccount(ctx context.Context, accountID uuid
 }
 
 func (c *client) FetchTransactionsForVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, params FetchTransactionsParams) (data TransactionsResponse, err error) {
-	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/Virtual/%s/Transactions", accountID.String(), virtualAccountID.String()), nil)
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/Virtual/%s/Transactions", accountID, virtualAccountID), nil)
 	if err != nil {
 		return data, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	params.ApplyFor(req)
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+	return data, c.do(ctx, req)
+}
+
+func (c *client) FetchTransactionForVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, trxID uuid.UUID) (data TransactionResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/Virtual/%s/Transactions/%s", accountID, virtualAccountID, trxID), nil)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
 	req.ExpectStatus(http.StatusOK)
 	req.DecodeTo(&data)
 	return data, c.do(ctx, req)
