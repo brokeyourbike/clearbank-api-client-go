@@ -36,6 +36,14 @@ type MCCYAccountCreatedPayload struct {
 	Type             string                      `json:"Type" validate:"required"`
 }
 
+// GetIdentifier returns first identifier. If no identifiers are found, an empty string is returned.
+func (w MCCYAccountCreatedPayload) GetIdentifier() string {
+	if len(w.Identifiers) > 0 {
+		return w.Identifiers[0].Identifier
+	}
+	return ""
+}
+
 // MCCYAccountUpdatedPayload
 // This webhook confirms that the multicurrency account has been updated
 type MCCYAccountUpdatedPayload struct {
@@ -56,6 +64,14 @@ type MCCYAccountUpdatedPayload struct {
 	Type              string                      `json:"Type" validate:"required"`
 }
 
+// GetIdentifier returns first identifier. If no identifiers are found, an empty string is returned.
+func (w MCCYAccountUpdatedPayload) GetIdentifier() string {
+	if len(w.Identifiers) > 0 {
+		return w.Identifiers[0].Identifier
+	}
+	return ""
+}
+
 // MCCYVirtualAccountCreatedPayload
 // This webhook confirms that the multicurrency virtual account has been created
 type MCCYVirtualAccountCreatedPayload struct {
@@ -66,6 +82,14 @@ type MCCYVirtualAccountCreatedPayload struct {
 	Status           clearbank.MCCYAccountStatus `json:"Status" validate:"required"`
 	Identifiers      []MCCYIdentifier            `json:"Identifiers" validate:"required"`
 	TimestampCreated clearbank.Time              `json:"TimestampCreated" validate:"required"`
+}
+
+// GetIdentifier returns first identifier. If no identifiers are found, an empty string is returned.
+func (w MCCYVirtualAccountCreatedPayload) GetIdentifier() string {
+	if len(w.Identifiers) > 0 {
+		return w.Identifiers[0].Identifier
+	}
+	return ""
 }
 
 // MCCYVirtualAccountUpdatedPayload
@@ -80,4 +104,12 @@ type MCCYVirtualAccountUpdatedPayload struct {
 	TimestampModified clearbank.Time              `json:"TimestampModified" validate:"required"`
 	StatusReason      string                      `json:"StatusReason"`
 	StatusInformation string                      `json:"StatusInformation"`
+}
+
+// GetIdentifier returns first identifier. If no identifiers are found, an empty string is returned.
+func (w MCCYVirtualAccountUpdatedPayload) GetIdentifier() string {
+	if len(w.Identifiers) > 0 {
+		return w.Identifiers[0].Identifier
+	}
+	return ""
 }
