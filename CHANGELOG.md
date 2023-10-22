@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.5.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.4.0...v0.5.0) (2023-10-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove webhook from name
+
+### Features
+
+* mccy inbound ([da7e608](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/da7e6086bd30b5bce8a586dece101005e038f95f))
+
+
+### Bug Fixes
+
+* it's an int ([d3847a5](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/d3847a59b73da79136c4757e92f440218a76f884))
+* remove webhook from name ([9200b93](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/9200b938ce34d1476688eedb0c52f63c1ae67b02))
+* simple name ([f5f01fb](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/f5f01fb95fc6a1bbe238ae419c7bc554ca7a1cbf))
+* update deps ([c0eb9a6](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/c0eb9a69798ae954870559cccbb04fecc51fad83))
+* use req-id for specific methods only ([e71439f](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/e71439f408f00df1048a86d1ada87ae627cadc84))
+
 ## [0.4.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.3.0...v0.4.0) (2023-09-17)
 
 
