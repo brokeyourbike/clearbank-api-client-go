@@ -197,57 +197,57 @@ func (w MCCYTransactionCancelledPayload) GetCounterpartAccountOwner() string {
 // MCCYPayloadAssessmentFailedPayload
 // This webhook confirms that a multicurrency payment has failed assessment
 type MCCYPayloadAssessmentFailedPayload struct {
-	TransactionID                   uuid.UUID      `json:"TransactionId" validate:"required"`
-	BatchID                         uuid.UUID      `json:"BatchId" validate:"required"`
-	EndToEndID                      string         `json:"EndToEndId" validate:"required"`
-	SchemeEndToEndID                string         `json:"SchemeEndToEndId"`
-	InstructedAmount                float64        `json:"InstructedAmount" validate:"required"`
-	InstructedCurrency              string         `json:"InstructedCurrency" validate:"required"`
-	Error                           string         `json:"Error" validate:"required"`
-	UltimateDebtorName              string         `json:"UltimateDebtorName"`
-	UltimateDebtorAccount           string         `json:"UltimateDebtorAccount" validate:"required"`
-	UltimateDebtorAccountIdentifier MCCYIdentifier `json:"UltimateDebtorAccountIdentifiers" validate:"required"`
-	UltimateDebtorAddressLine1      string         `json:"UltimateDebtorAddressLine1" validate:"required"`
-	UltimateDebtorAddressLine2      string         `json:"UltimateDebtorAddressLine2"`
-	UltimateDebtorAddressLine3      string         `json:"UltimateDebtorAddressLine3"`
-	UltimateDebtorPostCode          string         `json:"UltimateDebtorPostCode" validate:"required"`
-	UltimateDebtorCountryCode       string         `json:"UltimateDebtorCountryCode" validate:"required"`
-	UltimateCreditorIBAN            string         `json:"UltimateCreditorIBAN"`
-	UltimateCreditorAccountNumber   string         `json:"UltimateCreditorAccountNumber"`
-	UltimateCreditorBic             string         `json:"UltimateCreditorBic"`
-	UltimateCreditorName            string         `json:"UltimateCreditorName" validate:"required"`
-	UltimateCreditorAddressLine1    string         `json:"UltimateCreditorAddressLine1" validate:"required"`
-	UltimateCreditorAddressLine2    string         `json:"UltimateCreditorAddressLine2" `
-	UltimateCreditorAddressLine3    string         `json:"UltimateCreditorAddressLine3"`
-	UltimateCreditorPostCode        string         `json:"UltimateCreditorPostCode" validate:"required"`
-	UltimateCreditorCountryCode     string         `json:"UltimateCreditorCountryCode" validate:"required"`
+	TransactionID                   uuid.UUID `json:"TransactionId" validate:"required"`
+	BatchID                         uuid.UUID `json:"BatchId" validate:"required"`
+	EndToEndID                      string    `json:"EndToEndId" validate:"required"`
+	SchemeEndToEndID                string    `json:"SchemeEndToEndId"`
+	InstructedAmount                float64   `json:"InstructedAmount" validate:"required"`
+	InstructedCurrency              string    `json:"InstructedCurrency" validate:"required"`
+	Error                           string    `json:"Error" validate:"required"`
+	UltimateDebtorName              string    `json:"UltimateDebtorName"`
+	UltimateDebtorAccount           string    `json:"UltimateDebtorAccount" validate:"required"`
+	UltimateDebtorAccountIdentifier string    `json:"UltimateDebtorAccountIdentifier" validate:"required"`
+	UltimateDebtorAddressLine1      string    `json:"UltimateDebtorAddressLine1" validate:"required"`
+	UltimateDebtorAddressLine2      string    `json:"UltimateDebtorAddressLine2"`
+	UltimateDebtorAddressLine3      string    `json:"UltimateDebtorAddressLine3"`
+	UltimateDebtorPostCode          string    `json:"UltimateDebtorPostCode" validate:"required"`
+	UltimateDebtorCountryCode       string    `json:"UltimateDebtorCountryCode" validate:"required"`
+	UltimateCreditorIBAN            string    `json:"UltimateCreditorIBAN"`
+	UltimateCreditorAccountNumber   string    `json:"UltimateCreditorAccountNumber"`
+	UltimateCreditorBic             string    `json:"UltimateCreditorBic"`
+	UltimateCreditorName            string    `json:"UltimateCreditorName" validate:"required"`
+	UltimateCreditorAddressLine1    string    `json:"UltimateCreditorAddressLine1" validate:"required"`
+	UltimateCreditorAddressLine2    string    `json:"UltimateCreditorAddressLine2" `
+	UltimateCreditorAddressLine3    string    `json:"UltimateCreditorAddressLine3"`
+	UltimateCreditorPostCode        string    `json:"UltimateCreditorPostCode" validate:"required"`
+	UltimateCreditorCountryCode     string    `json:"UltimateCreditorCountryCode" validate:"required"`
 }
 
 // MCCYPayloadValidationFailedPayload
 // This webhook confirms that a multicurrency payment has failed validation
 type MCCYPayloadValidationFailedPayload struct {
-	TransactionID                   uuid.UUID      `json:"TransactionId" validate:"required"`
-	BatchID                         uuid.UUID      `json:"BatchId" validate:"required"`
-	EndToEndID                      string         `json:"EndToEndId" validate:"required"`
-	SchemeEndToEndID                string         `json:"SchemeEndToEndId"`
-	InstructedAmount                float64        `json:"InstructedAmount" validate:"required"`
-	InstructedCurrency              string         `json:"InstructedCurrency" validate:"required"`
-	Errors                          []string       `json:"Errors" validate:"required"`
-	UltimateDebtorName              string         `json:"UltimateDebtorName"`
-	UltimateDebtorAccount           string         `json:"UltimateDebtorAccount" validate:"required"`
-	UltimateDebtorAccountIdentifier MCCYIdentifier `json:"UltimateDebtorAccountIdentifiers" validate:"required"`
-	UltimateDebtorAddressLine1      string         `json:"UltimateDebtorAddressLine1" validate:"required"`
-	UltimateDebtorAddressLine2      string         `json:"UltimateDebtorAddressLine2"`
-	UltimateDebtorAddressLine3      string         `json:"UltimateDebtorAddressLine3"`
-	UltimateDebtorPostCode          string         `json:"UltimateDebtorPostCode" validate:"required"`
-	UltimateDebtorCountryCode       string         `json:"UltimateDebtorCountryCode" validate:"required"`
-	UltimateCreditorIBAN            string         `json:"UltimateCreditorIBAN"`
-	UltimateCreditorAccountNumber   string         `json:"UltimateCreditorAccountNumber"`
-	UltimateCreditorBic             string         `json:"UltimateCreditorBic"`
-	UltimateCreditorName            string         `json:"UltimateCreditorName" validate:"required"`
-	UltimateCreditorAddressLine1    string         `json:"UltimateCreditorAddressLine1" validate:"required"`
-	UltimateCreditorAddressLine2    string         `json:"UltimateCreditorAddressLine2" `
-	UltimateCreditorAddressLine3    string         `json:"UltimateCreditorAddressLine3"`
-	UltimateCreditorPostCode        string         `json:"UltimateCreditorPostCode" validate:"required"`
-	UltimateCreditorCountryCode     string         `json:"UltimateCreditorCountryCode" validate:"required"`
+	TransactionID                   uuid.UUID `json:"TransactionId" validate:"required"`
+	BatchID                         uuid.UUID `json:"BatchId" validate:"required"`
+	EndToEndID                      string    `json:"EndToEndId" validate:"required"`
+	SchemeEndToEndID                string    `json:"SchemeEndToEndId"`
+	InstructedAmount                float64   `json:"InstructedAmount" validate:"required"`
+	InstructedCurrency              string    `json:"InstructedCurrency" validate:"required"`
+	Errors                          []string  `json:"Errors" validate:"required"`
+	UltimateDebtorName              string    `json:"UltimateDebtorName"`
+	UltimateDebtorAccount           string    `json:"UltimateDebtorAccount" validate:"required"`
+	UltimateDebtorAccountIdentifier string    `json:"UltimateDebtorAccountIdentifier" validate:"required"`
+	UltimateDebtorAddressLine1      string    `json:"UltimateDebtorAddressLine1" validate:"required"`
+	UltimateDebtorAddressLine2      string    `json:"UltimateDebtorAddressLine2"`
+	UltimateDebtorAddressLine3      string    `json:"UltimateDebtorAddressLine3"`
+	UltimateDebtorPostCode          string    `json:"UltimateDebtorPostCode" validate:"required"`
+	UltimateDebtorCountryCode       string    `json:"UltimateDebtorCountryCode" validate:"required"`
+	UltimateCreditorIBAN            string    `json:"UltimateCreditorIBAN"`
+	UltimateCreditorAccountNumber   string    `json:"UltimateCreditorAccountNumber"`
+	UltimateCreditorBic             string    `json:"UltimateCreditorBic"`
+	UltimateCreditorName            string    `json:"UltimateCreditorName" validate:"required"`
+	UltimateCreditorAddressLine1    string    `json:"UltimateCreditorAddressLine1" validate:"required"`
+	UltimateCreditorAddressLine2    string    `json:"UltimateCreditorAddressLine2" `
+	UltimateCreditorAddressLine3    string    `json:"UltimateCreditorAddressLine3"`
+	UltimateCreditorPostCode        string    `json:"UltimateCreditorPostCode" validate:"required"`
+	UltimateCreditorCountryCode     string    `json:"UltimateCreditorCountryCode" validate:"required"`
 }
