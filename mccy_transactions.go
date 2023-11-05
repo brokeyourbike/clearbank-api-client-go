@@ -97,6 +97,11 @@ type MCCYTransactionPayload struct {
 	// Information about the intermediary/correspondent bank.
 	IntermediaryAgent *MCCYIntermediaryAgent `json:"intermediaryAgent,omitempty"`
 
+	Purpose struct {
+		Code        string `json:"code"`
+		Proprietary string `json:"proprietary"`
+	} `json:"purpose,omitempty"`
+
 	// Information about the creditor of the transaction.
 	Creditor struct {
 		// Creditor’s name.
