@@ -36,6 +36,7 @@ func (c *client) InitiateInternalTransaction(ctx context.Context, payload Create
 	return c.do(ctx, req)
 }
 
+// MCCYIntermediaryAgent - information about the intermediary/correspondent bank.
 type MCCYIntermediaryAgent struct {
 	// Information that identifies the intermediary agent as a financial institution.
 	// Mandatory only when intermediary agent details are being provided.
@@ -61,6 +62,22 @@ type MCCYIntermediaryAgent struct {
 			Country      string `json:"country"`
 		} `json:"addressDetails"`
 	} `json:"FinancialInstitutionIdentification"`
+}
+
+// MCCYPurpose - information about the purpose of the transaction.
+type MCCYPurpose struct {
+	// Purpose of the transaction in coded form, as specified in the Purpose11Code code set required by ISO 20022 Message Schemas.
+	// No need to specify if you are providing this name in free-form text (i.e., proprietary).
+	Code string `json:"code"`
+	// Purpose of the transaction in free-form text.
+	// No need to specify if you are providing this name in coded form (i.e., code).
+	Proprietary string `json:"proprietary"`
+}
+
+// MCCYRemittanceInformation - remittance information to accompany the payment.
+type MCCYRemittanceInformation struct {
+	// Additional remittance information in free-form text, to compliment the structured remittance information.
+	AdditionalRemittanceInformation string `json:"additionalRemittanceInformation"`
 }
 
 type MCCYTransactionPayload struct {
@@ -97,10 +114,11 @@ type MCCYTransactionPayload struct {
 	// Information about the intermediary/correspondent bank.
 	IntermediaryAgent *MCCYIntermediaryAgent `json:"intermediaryAgent,omitempty"`
 
-	Purpose struct {
-		Code        string `json:"code"`
-		Proprietary string `json:"proprietary"`
-	} `json:"purpose,omitempty"`
+	// Information about the purpose of the transaction.
+	Purpose *MCCYPurpose `json:"purpose,omitempty"`
+
+	// Remittance information to accompany the payment.
+	RemittanceInformation *MCCYRemittanceInformation `json:"remittanceInformation,omitempty"`
 
 	// Information about the creditor of the transaction.
 	Creditor struct {
