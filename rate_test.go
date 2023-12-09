@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	_ "embed"
-	"errors"
 	"io"
 	"net/http"
 	"testing"
@@ -41,6 +40,15 @@ func TestFetchMarketrate(t *testing.T) {
 	assert.Equal(t, "GBP/USD", got.Symbol)
 }
 
+func TestFetchMarketrate_RequestErr(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
+
+	_, err := client.FetchMarketrate(nil, clearbank.MarketrateParams{FixedSide: clearbank.FixedSideBuy}) //lint:ignore SA1012 testing failure
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "failed to create request")
+}
+
 func TestFetchMarketrate_Fail(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
@@ -65,6 +73,15 @@ func TestNegotiate(t *testing.T) {
 	assert.Equal(t, "https://example.com", got.URL)
 }
 
+func TestNegotiate_RequestErr(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
+
+	_, err := client.Negotiate(nil) //lint:ignore SA1012 testing failure
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "failed to create request")
+}
+
 func TestNegotiate_ValidationFailed(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
@@ -75,13 +92,4 @@ func TestNegotiate_ValidationFailed(t *testing.T) {
 	_, err := client.Negotiate(context.TODO())
 	require.Error(t, err)
 	require.ErrorIs(t, err, clearbank.UnexpectedResponse{Status: 123, Body: "{}"}, "err response with no required fields is unexpected")
-}
-
-func TestNegotiate_FailedHttpRequest(t *testing.T) {
-	mockHttpClient := clearbank.NewMockHttpClient(t)
-	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
-	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(nil, errors.New("cannot do")).Once()
-
-	_, err := client.Negotiate(context.TODO())
-	assert.Error(t, err)
 }

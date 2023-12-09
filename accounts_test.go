@@ -40,6 +40,15 @@ func TestFetchAccount(t *testing.T) {
 	assert.Len(t, got.Account.Currency, 1)
 }
 
+func TestFetchAccount_RequestErr(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
+
+	_, err := client.FetchAccount(nil, uuid.New()) //lint:ignore SA1012 testing failure
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "failed to create request")
+}
+
 func TestFetchAccounts(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
@@ -51,6 +60,15 @@ func TestFetchAccounts(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Len(t, got.Accounts, 1)
+}
+
+func TestFetchAccounts_RequestErr(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
+
+	_, err := client.FetchAccounts(nil, 1, 100) //lint:ignore SA1012 testing failure
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "failed to create request")
 }
 
 func TestCreateAccount(t *testing.T) {
@@ -67,4 +85,13 @@ func TestCreateAccount(t *testing.T) {
 	got, err := client.CreateAccount(ctx, clearbank.CreateAccountPayload{})
 	require.NoError(t, err)
 	assert.Equal(t, uuid.MustParse("a85002e3-0116-4b14-b7fa-427e60f4f6bc"), got.Account.ID)
+}
+
+func TestCreateAccount_RequestErr(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
+
+	_, err := client.CreateAccount(nil, clearbank.CreateAccountPayload{}) //lint:ignore SA1012 testing failure
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "failed to create request")
 }

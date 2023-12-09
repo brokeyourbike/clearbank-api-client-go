@@ -3,7 +3,6 @@ package clearbank_test
 import (
 	"bytes"
 	"context"
-	"errors"
 	"io"
 	"net/http"
 	"testing"
@@ -11,6 +10,7 @@ import (
 	"github.com/brokeyourbike/clearbank-api-client-go"
 	"github.com/stretchr/testify/assert"
 	mock "github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestInitiateFxOrder(t *testing.T) {
@@ -27,15 +27,11 @@ func TestInitiateFxOrder(t *testing.T) {
 	assert.NoError(t, client.InitiateFxOrder(ctx, clearbank.FXPayload{}))
 }
 
-func TestInitiateFxOrder_FailedHttpRequest(t *testing.T) {
-	mockSigner := clearbank.NewMockSigner(t)
+func TestInitiateFxOrder_RequestErr(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
-	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
 
-	ctx := clearbank.RequestIdContext(context.TODO(), "123")
-	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
-
-	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(nil, errors.New("cannot do")).Once()
-
-	assert.Error(t, client.InitiateFxOrder(ctx, clearbank.FXPayload{}))
+	err := client.InitiateFxOrder(nil, clearbank.FXPayload{}) //lint:ignore SA1012 testing failure
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "failed to create request")
 }
