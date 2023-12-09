@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.7.1...v0.8.0) (2023-12-09)
+
+
+### Features
+
+* add purpose ([3f6b22c](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/3f6b22cf8bca652a123d70ecdda880ebe0695e7b))
+* coverage ([df42b57](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/df42b570750359138ef9456d8232dbd951c1f517))
+* purpose and remitance info ([ea026ce](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/ea026ce0050e9176f4b6a2875aa96d4ed837cbc2))
+
 ### [0.7.1](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.7.0...v0.7.1) (2023-10-22)
 
 
