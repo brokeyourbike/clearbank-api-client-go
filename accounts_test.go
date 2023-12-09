@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/brokeyourbike/clearbank-api-client-go"
-	"github.com/brokeyourbike/clearbank-api-client-go/signature"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	mock "github.com/stretchr/testify/mock"
@@ -55,7 +54,7 @@ func TestFetchAccounts(t *testing.T) {
 }
 
 func TestCreateAccount(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
+	mockSigner := clearbank.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
 

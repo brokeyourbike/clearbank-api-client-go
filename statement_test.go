@@ -9,13 +9,12 @@ import (
 	"testing"
 
 	"github.com/brokeyourbike/clearbank-api-client-go"
-	"github.com/brokeyourbike/clearbank-api-client-go/signature"
 	"github.com/stretchr/testify/assert"
 	mock "github.com/stretchr/testify/mock"
 )
 
 func TestRequestStatement(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
+	mockSigner := clearbank.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
 
@@ -29,7 +28,7 @@ func TestRequestStatement(t *testing.T) {
 }
 
 func TestRequestStatementFor(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
+	mockSigner := clearbank.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
 

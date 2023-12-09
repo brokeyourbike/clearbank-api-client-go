@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/brokeyourbike/clearbank-api-client-go"
-	"github.com/brokeyourbike/clearbank-api-client-go/signature"
 	"github.com/brokeyourbike/clearbank-api-client-go/signature/local"
 	"github.com/sirupsen/logrus"
 	logrustest "github.com/sirupsen/logrus/hooks/test"
@@ -23,7 +22,7 @@ import (
 var badRequest []byte
 
 func TestTest(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
+	mockSigner := clearbank.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 
 	logger, hook := logrustest.NewNullLogger()
@@ -59,7 +58,7 @@ func TestFailedHttpRequest(t *testing.T) {
 }
 
 func TestFailedSign(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
+	mockSigner := clearbank.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 
 	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
@@ -71,7 +70,7 @@ func TestFailedSign(t *testing.T) {
 }
 
 func TestUnexpectedStatus(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
+	mockSigner := clearbank.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 
 	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
@@ -88,7 +87,7 @@ func TestUnexpectedStatus(t *testing.T) {
 }
 
 func TestBadRequest(t *testing.T) {
-	mockSigner := signature.NewMockSigner(t)
+	mockSigner := clearbank.NewMockSigner(t)
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 
 	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))

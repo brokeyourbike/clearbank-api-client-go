@@ -24,6 +24,10 @@ type HttpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
+type Signer interface {
+	signature.Signer
+}
+
 type Client interface {
 	TestClient
 	RateClient
@@ -39,7 +43,7 @@ var _ Client = (*client)(nil)
 
 type client struct {
 	httpClient HttpClient
-	signer     signature.Signer
+	signer     Signer
 	logger     *logrus.Logger
 	validate   *validator.Validate
 	baseURL    string
@@ -70,7 +74,7 @@ func WithBaseURL(baseURL string) ClientOption {
 	}
 }
 
-func NewClient(token string, signer signature.Signer, options ...ClientOption) *client {
+func NewClient(token string, signer Signer, options ...ClientOption) *client {
 	c := &client{
 		httpClient: http.DefaultClient,
 		signer:     signer,
