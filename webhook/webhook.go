@@ -32,6 +32,7 @@ const (
 	FxTradeExecuted                = "Fx.Trade.Executed"
 	FxTradeSettled                 = "Fx.Trade.Settled"
 	FxTradeCancelled               = "Fx.Trade.Cancelled"
+	FxTradeSettlementFailed        = "Fx.Trade.Settlement.Failed"
 )
 
 type Request struct {

@@ -86,3 +86,27 @@ type FxTradeCancelledPayload struct {
 	CancellationCode        string         `json:"CancellationCode" validate:"required"`
 	CancellationReason      string         `json:"CancellationReason" validate:"required"`
 }
+
+// FxTradeSettlementFailedPayload
+// This webhook notifies that the settlement of an FX trade has failed.
+type FxTradeSettlementFailedPayload struct {
+	SellAccountOwner        string         `json:"SellAccountOwner" validate:"required"`
+	SellAccountIBAN         string         `json:"SellAccountIban" validate:"required"`
+	BuyAccountOwner         string         `json:"BuyAccountOwner" validate:"required"`
+	BuyAccountIBAN          string         `json:"BuyAccountIban" validate:"required"`
+	Attestation             string         `json:"Attestation" validate:"required"`
+	ValueDate               clearbank.Time `json:"ValueDate" validate:"required"`
+	InstructedAmount        float64        `json:"InstructedAmount" validate:"required"`
+	FixedSide               string         `json:"FixedSide" validate:"required"`
+	BuyCurrency             string         `json:"BuyCurrency" validate:"required"`
+	SellCurrency            string         `json:"SellCurrency" validate:"required"`
+	Margin                  float64        `json:"Margin"`
+	MarginAccountIBAN       string         `json:"MarginAccountIban"`
+	EndToEndID              string         `json:"EndToEndId" validate:"required"`
+	UnstructuredInformation string         `json:"UnstructuredInformation"`
+	CancellationCode        string         `json:"CancellationCode" validate:"required"`
+	CancellationReason      string         `json:"CancellationReason" validate:"required"`
+	WillBeRetried           bool           `json:"WillBeRetried" validate:"required"`
+	ReversalFee             float64        `json:"ReversalFee" validate:"required"`
+	ReversalFeeCurrency     string         `json:"ReversalFeeCurrency" validate:"required"`
+}
