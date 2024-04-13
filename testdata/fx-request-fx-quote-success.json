@@ -1,0 +1,19 @@
+{
+    "QuoteId": "32fd7f3f-2abe-4f83-b15d-1285a07f6053",
+    "ValueDate": "2001-01-20",
+    "CurrencyPair": "EUR/GBP",
+    "ExchangeRate": 0.7234,
+    "SellCurrency": "EUR",
+    "SellAmount": 100,
+    "BuyCurrency": "GBP",
+    "BuyAmount": 72.34,
+    "CreatedAt": "2001-01-20T09:30:45Z",
+    "ExpiresAt": "2001-01-20T09:31:30Z",
+    "QuoteRequest": {
+        "ValueDate": "2001-01-20",
+        "InstructedAmount": 100,
+        "FixedSide": "Sell",
+        "SellCurrency": "EUR",
+        "BuyCurrency": "GBP"
+    }
+}
