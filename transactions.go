@@ -12,13 +12,25 @@ import (
 
 type TransactionsClient interface {
 	InitiateFPSTransactions(context.Context, CreateTransactionsPayload) (TransactionsCreatedResponse, error)
-	InitiateCHAPSTransactions(context.Context, CreateTransactionsPayload) (TransactionsCreatedResponse, error)
+	InitiateCHAPSPayment(context.Context, CreateCHAPSPaymentPayload) (PaymentInitiatedResponse, error)
 	InitiateFPSPaymentOriginatedOverseas(context.Context, CreateFPSPaymentOriginatedOverseasPayload) (TransactionsCreatedResponse, error)
 	FetchTransactions(ctx context.Context, params FetchTransactionsParams) (TransactionsResponse, error)
 	FetchTransactionForAccount(ctx context.Context, accountID uuid.UUID, trxID uuid.UUID) (TransactionResponse, error)
 	FetchTransactionsForAccount(ctx context.Context, accountID uuid.UUID, params FetchTransactionsParams) (TransactionsResponse, error)
 	FetchTransactionForVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, trxID uuid.UUID) (TransactionResponse, error)
 	FetchTransactionsForVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, params FetchTransactionsParams) (TransactionsResponse, error)
+}
+
+type CreditTransferOtherIdentification struct {
+	// Identification assigned by an institution.
+	Identification string `json:"identification"`
+	// Name of the identification scheme.
+	SchemeName struct {
+		// Name of the identification scheme in coded form.
+		Code string `json:"code"`
+		// Name of the identification scheme in free-form text.
+		Proprietary string `json:"proprietary"`
+	} `json:"schemeName"`
 }
 
 type CreditTransfer struct {
@@ -58,17 +70,7 @@ type CreditTransfer struct {
 			// Unique identification of an account,
 			// as assigned by the account servicer,
 			// using an identification scheme.
-			Other struct {
-				// Identification assigned by an institution.
-				Identification string `json:"identification"`
-				// Name of the identification scheme.
-				SchemeName struct {
-					// Name of the identification scheme in coded form.
-					Code string `json:"code"`
-					// Name of the identification scheme in free-form text.
-					Proprietary string `json:"proprietary"`
-				} `json:"schemeName"`
-			} `json:"other,omitempty"`
+			Other *CreditTransferOtherIdentification `json:"other,omitempty"`
 		} `json:"identification"`
 	} `json:"creditorAccount"`
 
@@ -146,8 +148,93 @@ func (c *client) InitiateFPSTransactions(ctx context.Context, payload CreateTran
 	return data, c.do(ctx, req)
 }
 
-func (c *client) InitiateCHAPSTransactions(ctx context.Context, payload CreateTransactionsPayload) (data TransactionsCreatedResponse, err error) {
-	req, err := c.newRequest(ctx, http.MethodPost, "/v3/Payments/CHAPS", payload)
+const SchemeNameOther = "Other"
+const ProprietarySortCode = "SortcodeAccountNumber"
+
+type Address struct {
+	BuildingNumber string `json:"buildingNumber,omitempty"`
+	BuildingName   string `json:"buildingName,omitempty"`
+	StreetName     string `json:"streetName,omitempty"`
+	TownName       string `json:"townName"`
+	PostCode       string `json:"postCode"`
+	Country        string `json:"country"`
+}
+
+type CreateCHAPSPaymentPayload struct {
+	// Unique identification, as assigned by you, to unambiguously identify the payment instruction.
+	InstructionIdentification string `json:"instructionIdentification"`
+
+	// Unique identification, as assigned by the initiating party, to unambiguously identify the transaction.
+	// This identification is passed on, unchanged, throughout the entire end-to-end chain.
+	EndToEndIdentification string `json:"endToEndIdentification"`
+
+	// Amount of money to be moved between the debtor and creditor,
+	// before deduction of charges, expressed in the currency as ordered by the initiating party.
+	InstructedAmount struct {
+		Currency string  `json:"currency"`
+		Amount   float64 `json:"amount"`
+	} `json:"instructedAmount"`
+
+	// The ClearBank account that will be credited or debited
+	// based on the successful completion of the payment instruction.
+	// You need to include EITHER the iban field OR the schemeName and identification fields in this object.
+	SourceAccount struct {
+		IBAN           string `json:"iban,omitempty"`
+		SchemeName     string `json:"schemeName,omitempty"`
+		Proprietary    string `json:"proprietary,omitempty"`
+		Identification string `json:"identification,omitempty"`
+	} `json:"sourceAccount"`
+
+	// Unambiguous identification of the account of the debtor
+	// to which a debit entry will be made as a result of the transaction.
+	// You need to include EITHER the iban field OR the schemeName and identification fields in this object.
+	DebtorAccount struct {
+		IBAN           string `json:"iban,omitempty"`
+		SchemeName     string `json:"schemeName,omitempty"`
+		Proprietary    string `json:"proprietary,omitempty"`
+		Identification string `json:"identification,omitempty"`
+	} `json:"debtorAccount"`
+
+	// Unambiguous identification of the account of the creditor
+	// to which a credit entry will be posted as a result of the payment transaction.
+	CreditorAccount struct {
+		IBAN           string `json:"iban,omitempty"`
+		SchemeName     string `json:"schemeName,omitempty"`
+		Proprietary    string `json:"proprietary,omitempty"`
+		Identification string `json:"identification,omitempty"`
+	} `json:"creditorAccount"`
+
+	// Party that is owed an amount of money by the (ultimate) debtor.
+	Creditor struct {
+		Name    string   `json:"name"`
+		Address *Address `json:"postalAddress,omitempty"`
+	} `json:"creditor"`
+
+	// Party that owes an amount of money to the (ultimate) creditor.
+	Debtor struct {
+		Name    string  `json:"name"`
+		Address Address `json:"postalAddress"`
+	} `json:"debtor"`
+
+	// Underlying reason for the payment transaction, as published in an external purpose code list.
+	Purpose string `json:"purpose,omitempty"`
+
+	// Category purpose, in a proprietary form.
+	CategoryPurpose string `json:"categoryPurpose,omitempty"`
+
+	// Information supplied to enable the matching of an entry with the items that the transfer is intended to settle,
+	// such as commercial invoices in an accounts' receivable system.
+	RemittanceInformation struct {
+		CreditorReferenceInformation string `json:"creditorReferenceInformation"`
+	} `json:"remittanceInformation"`
+}
+
+type PaymentInitiatedResponse struct {
+	PaymentID uuid.UUID `json:"paymentId"`
+}
+
+func (c *client) InitiateCHAPSPayment(ctx context.Context, payload CreateCHAPSPaymentPayload) (data PaymentInitiatedResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPost, "/payments/chaps/v4/customer-payments", payload)
 	if err != nil {
 		return data, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -158,119 +245,79 @@ func (c *client) InitiateCHAPSTransactions(ctx context.Context, payload CreateTr
 	return data, c.do(ctx, req)
 }
 
-type POOPaymentInstruction struct {
-	// Information about the debtor of the transaction (the counterparty).
-	Debtor struct {
-		// The debtor's legal entity identifier (e.g., charity number).
-		// Should be supplied if known.
-		LegalEntityIdentifier string `json:"legalEntityIdentifier,omitempty"`
-	} `json:"debtor"`
+type CreateFPSPaymentOriginatedOverseasPayload struct {
+	// Unique identification, as assigned by you, to unambiguously identify the payment instruction.
+	InstructionIdentification string `json:"instructionIdentification"`
 
-	// Information about the counterpart in a given transaction.
+	// Unique identification, as assigned by the initiating party, to unambiguously identify the transaction. This identification is passed on, unchanged, throughout the entire end-to-end chain.
+	EndToEndIdentification string `json:"endToEndIdentification"`
+
+	// Underlying reason for the payment transaction, as published in an external purpose code list.
+	Purpose string `json:"purpose,omitempty"`
+
+	// Category purpose, in a proprietary form.
+	CategoryPurpose string `json:"categoryPurpose,omitempty"`
+
+	// Amount of money to be moved between the debtor and creditor,
+	// before deduction of charges, expressed in the currency as ordered by the initiating party.
+	InstructedAmount struct {
+		Currency string  `json:"currency"`
+		Amount   float64 `json:"amount"`
+	} `json:"instructedAmount"`
+
+	// The ClearBank account that will be credited or debited
+	// based on the successful completion of the payment instruction.
+	// You need to include EITHER the iban field OR the schemeName and identification fields in this object.
+	SourceAccount struct {
+		IBAN           string `json:"iban,omitempty"`
+		SchemeName     string `json:"schemeName,omitempty"`
+		Proprietary    string `json:"proprietary,omitempty"`
+		Identification string `json:"identification,omitempty"`
+	} `json:"sourceAccount"`
+
+	// Unambiguous identification of the account of the debtor
+	// to which a debit entry will be made as a result of the transaction.
+	// You need to include EITHER the iban field OR the schemeName and identification fields in this object.
 	DebtorAccount struct {
-		// The identifiable information of an account.
-		Identification struct {
-			// The International Bank Account Number (IBAN).
-			IBAN string `json:"iban"`
-		} `json:"identification"`
+		IBAN           string `json:"iban,omitempty"`
+		SchemeName     string `json:"schemeName,omitempty"`
+		Proprietary    string `json:"proprietary,omitempty"`
+		Identification string `json:"identification,omitempty"`
 	} `json:"debtorAccount"`
 
-	// Information about the ultimate debtor of the transaction
-	// (the party holding the ultimate debtor account).
-	UltimateDebtor struct {
-		// Ultimate debtor's name.
-		Name string `json:"name"`
-		// The full postal address of the ultimate debtor.
-		// Depending on the resident country convention, this must include the unit number (if applicable),
-		// building name or number, street, town, city, state/province/municipality, and postal code/zip code.
-		Address string `json:"address"`
-	} `json:"ultimateDebtor"`
+	// Unambiguous identification of the account of the creditor
+	// to which a credit entry will be posted as a result of the payment transaction.
+	CreditorAccount struct {
+		IBAN           string `json:"iban,omitempty"`
+		SchemeName     string `json:"schemeName,omitempty"`
+		Proprietary    string `json:"proprietary,omitempty"`
+		Identification string `json:"identification,omitempty"`
+	} `json:"creditorAccount"`
 
-	// Information about the ultimate debtor's account.
-	UltimateDebtorAccount struct {
-		// Account identifiers used to uniquely identify the ultimate debtor's account.
-		Identification struct {
-			// Ultimate debtor's Bank Identifier Code (BIC).
-			BIC string `json:"bic"`
-			// Ultimate debtor's account number.
-			AccountNumber string `json:"accountNumber"`
-		} `json:"identification"`
-	} `json:"ultimateDebtorAccount"`
+	// Party that owes an amount of money to the (ultimate) creditor.
+	Debtor struct {
+		Name    string  `json:"name"`
+		Address Address `json:"postalAddress"`
+	} `json:"debtor"`
 
-	// Information about the payment to be made from the ultimate debtor's account.
-	CreditTransfer struct {
-		// Identification of the payment instruction.
-		PaymentIdentification struct {
-			// Unique identification, as assigned by the initiating party to unambiguously identify the transaction.
-			// This identification is passed on unchanged throughout the entire end-to-end chain.
-			EndToEndIdentification string `json:"endToEndIdentification"`
-		} `json:"paymentIdentification"`
+	// Party that is owed an amount of money by the (ultimate) debtor.
+	Creditor struct {
+		Name    string  `json:"name"`
+		BIC     string  `json:"bic"`
+		Address Address `json:"postalAddress"`
+	} `json:"creditor"`
 
-		// Information about the amount (original and instructed), currency and exchange rate.
-		Amount struct {
-			// If supplied, this must not be 'GBP' and 'originalAmount' as well as 'exchangeRate' must be greater than 0.
-			// If not supplied, then 'originalAmount' and 'exchangeRate' must be 0.
-			OriginalCurrency string `json:"originalCurrency,omitempty"`
-			// Amount of funds to be moved between the debtor and creditor, prior to deduction of charges.
-			OriginalAmount float64 `json:"originalAmount,omitempty"`
-			// Exchange rate applied to convert the currency of the source amount or OriginalCurrency (prior to deduction of charges) to GBP.
-			ExchangeRate     float64 `json:"exchangeRate,omitempty"`
-			InstructedAmount float64 `json:"instructedAmount"`
-		} `json:"amount"`
+	RemittanceInformation struct {
+		CreditorReferenceInformation string `json:"creditorReferenceInformation"`
+	} `json:"remittanceInformation"`
 
-		// Information about the creditor of the transaction (the beneficiary account holder).
-		Creditor struct {
-			// Creditor's name.
-			Name string `json:"name"`
-
-			// The creditor's legal entity identifier (e.g., charity number).
-			// Should be supplied if known.
-			LegalEntityIndentifier string `json:"legalEntityIdentifier,omitempty"`
-
-			// Creditor's address.
-			Address string `json:"address,omitempty"`
-		} `json:"creditor"`
-
-		// Information about the creditor's account.
-		CreditorAccount struct {
-			// Account identifiers used to uniquely identify the account.
-			Identification struct {
-				// The International Bank Account Number (IBAN).
-				IBAN string `json:"iban,omitempty"`
-			} `json:"identification"`
-		} `json:"creditorAccount"`
-
-		// Information supplied by the remitter to reconcile an entry with item(s) that the payment intends to settle.
-		RemittanceInformation struct {
-			// Information supplied by the remitter (in a structured form),
-			// to reconcile an entry with item(s) that the payment intends to settle (e.g., a purchase reference number).
-			Structured struct {
-				// Reference information provided by the ultimate debtor
-				// to allow the identification of underlying documents by the creditor.
-				CreditorReferenceInformation struct {
-					// A reference, as assigned by the ultimate debtor
-					// to unambiguously refer to the payment transaction.
-					// Conditionally required if supplied by the ultimate debtor.
-					Reference string `json:"reference"`
-				} `json:"creditorReferenceInformation"`
-			} `json:"structured,omitempty"`
-
-			// Additional unstructured remittance information.
-			Unstructured struct {
-				// Additional remittance information.
-				AdditionalReferenceInformation struct {
-					// Additional reference information.
-					// Conditionally required if supplied by the ultimate debtor.
-					Reference string `json:"reference"`
-				} `json:"additionalReferenceInformation"`
-			} `json:"unstructured,omitempty"`
-		} `json:"remittanceInformation,omitempty"`
-	} `json:"creditTransfer"`
-}
-
-type CreateFPSPaymentOriginatedOverseasPayload struct {
-	// Information about the single payment.
-	PaymentInstruction POOPaymentInstruction `json:"paymentInstruction"`
+	// Agent between the debtor's agent and the creditor's agent.
+	// You must include the Direct Participant's information in this object.
+	IntermediaryAgent struct {
+		Name    string  `json:"name"`
+		BIC     string  `json:"bic"`
+		Address Address `json:"postalAddress"`
+	} `json:"intermediaryAgent1"`
 }
 
 func (c *client) InitiateFPSPaymentOriginatedOverseas(ctx context.Context, payload CreateFPSPaymentOriginatedOverseasPayload) (data TransactionsCreatedResponse, err error) {
