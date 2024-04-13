@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.9.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.8.1...v0.9.0) (2024-04-13)
+
+
+### Features
+
+* chaps v4 ([1a15215](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/1a15215d250662b65e64338f349034c735d6f2ce))
+* fx quote ([2d40898](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/2d40898df50bb4d1678c4b75fe584dcc7ade5faf))
+* fx settlement failed ([2970418](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/297041884bca30c7df0b2ac3a7ccc9cdfccd1cf7))
+* va created ([d91458c](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/d91458c7ce7b37b2b1ad91b7c7b05a88b8f9d359))
+* with request id gen ([e30d424](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/e30d424adebce2f66d783df8af6b7fb76c8892c0))
+
+
+### Bug Fixes
+
+* update deps ([49b9308](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/49b93088cede9ddea0994f0fd132e95676c3c3ba))
+
 ### [0.8.1](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.8.0...v0.8.1) (2023-12-23)
 
 
