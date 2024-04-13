@@ -28,6 +28,8 @@ type Signer interface {
 	signature.Signer
 }
 
+type RequestIdGen func() string
+
 type Client interface {
 	TestClient
 	RateClient
@@ -42,12 +44,13 @@ type Client interface {
 var _ Client = (*client)(nil)
 
 type client struct {
-	httpClient HttpClient
-	signer     Signer
-	logger     *logrus.Logger
-	validate   *validator.Validate
-	baseURL    string
-	token      string
+	httpClient   HttpClient
+	signer       Signer
+	logger       *logrus.Logger
+	validate     *validator.Validate
+	requestIdGen RequestIdGen
+	baseURL      string
+	token        string
 }
 
 // ClientOption is a function that configures a Client.
@@ -71,6 +74,13 @@ func WithLogger(l *logrus.Logger) ClientOption {
 func WithBaseURL(baseURL string) ClientOption {
 	return func(target *client) {
 		target.baseURL = strings.TrimSuffix(baseURL, "/")
+	}
+}
+
+// WithRequestIDGenerator generate requestId on demand.
+func WithRequestIDGenerator(f RequestIdGen) ClientOption {
+	return func(target *client) {
+		target.requestIdGen = f
 	}
 }
 
@@ -114,7 +124,12 @@ func (c *client) newRequest(ctx context.Context, method, url string, body interf
 		req.Body = io.NopCloser(bytes.NewReader(b))
 		req.Header.Set("DigitalSignature", string(signature))
 
-		requestID = RequestIdFromContext(ctx)
+		if c.requestIdGen != nil {
+			requestID = c.requestIdGen()
+		}
+		if v := RequestIdFromContext(ctx); v != "" {
+			requestID = v
+		}
 		req.Header.Set("X-Request-Id", requestID)
 	}
 

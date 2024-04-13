@@ -31,7 +31,6 @@ func TestTest(t *testing.T) {
 	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient), clearbank.WithLogger(logger))
 
 	ctx := clearbank.RequestIdContext(context.TODO(), "123")
-
 	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
 
 	resp := &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader(nil))}

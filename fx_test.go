@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"io"
 	"net/http"
+	"slices"
 	"testing"
 
 	"github.com/brokeyourbike/clearbank-api-client-go"
@@ -50,6 +51,55 @@ func TestExecuteFxQuote(t *testing.T) {
 
 	resp := &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(bytes.NewReader(nil))}
 	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
+
+	assert.NoError(t, client.ExecuteFxQuote(ctx, clearbank.FXPayload{}))
+}
+
+func TestExecuteFxQuote_RequestIdFromCtx(t *testing.T) {
+	mockSigner := clearbank.NewMockSigner(t)
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
+
+	ctx := clearbank.RequestIdContext(context.TODO(), "123")
+	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
+
+	resp := &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(bytes.NewReader(nil))}
+	mockHttpClient.On("Do", mock.MatchedBy(func(req *http.Request) bool { return slices.Contains(req.Header["X-Request-Id"], "123") })).Return(resp, nil).Once()
+
+	assert.NoError(t, client.ExecuteFxQuote(ctx, clearbank.FXPayload{}))
+}
+
+func TestExecuteFxQuote_RequestIdFromFunc(t *testing.T) {
+	mockSigner := clearbank.NewMockSigner(t)
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", mockSigner,
+		clearbank.WithHTTPClient(mockHttpClient),
+		clearbank.WithRequestIDGenerator(func() string { return "456" }),
+	)
+
+	ctx := context.TODO()
+	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
+
+	resp := &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(bytes.NewReader(nil))}
+	mockHttpClient.On("Do", mock.MatchedBy(func(req *http.Request) bool { return slices.Contains(req.Header["X-Request-Id"], "456") })).Return(resp, nil).Once()
+
+	assert.NoError(t, client.ExecuteFxQuote(ctx, clearbank.FXPayload{}))
+}
+
+func TestExecuteFxQuote_RequestIdFromCtxAndFunc(t *testing.T) {
+	mockSigner := clearbank.NewMockSigner(t)
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", mockSigner,
+		clearbank.WithHTTPClient(mockHttpClient),
+		clearbank.WithRequestIDGenerator(func() string { return "456" }),
+	)
+
+	ctx := clearbank.RequestIdContext(context.TODO(), "123")
+	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
+
+	resp := &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(bytes.NewReader(nil))}
+	// ctx takex priority and overrides the func
+	mockHttpClient.On("Do", mock.MatchedBy(func(req *http.Request) bool { return slices.Contains(req.Header["X-Request-Id"], "123") })).Return(resp, nil).Once()
 
 	assert.NoError(t, client.ExecuteFxQuote(ctx, clearbank.FXPayload{}))
 }
