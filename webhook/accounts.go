@@ -43,6 +43,20 @@ type AccountDisabledPayload struct {
 	DisabledTimestamp clearbank.Time `json:"DisabledTimestamp" validate:"required"`
 }
 
+// VirtualAccountCreatedPayload
+// This webhook confirms creation of a virtual account.
+type VirtualAccountCreatedPayload struct {
+	AccountID         uuid.UUID `json:"AccountId" validate:"required"`
+	VirtualAccountID  uuid.UUID `json:"VirtualAccountId" validate:"required"`
+	AccountIdentifier struct {
+		IBAN               string `json:"Iban" validate:"required"`
+		BBAN               string `json:"Bban" validate:"required"`
+		ExternalIdentifier string `json:"ExternalIdentifier"`
+	} `json:"AccountIdentifier" validate:"required"`
+	OwnerName        string         `json:"OwnerName"`
+	TimestampCreated clearbank.Time `json:"TimestampCreated" validate:"required"`
+}
+
 // VirtualAccountCreationFailedPayload
 // This webhook confirms a virtual account creation failure
 type VirtualAccountCreationFailedPayload struct {
@@ -53,7 +67,7 @@ type VirtualAccountCreationFailedPayload struct {
 		BBAN               string `json:"Bban" validate:"required"`
 		ExternalIdentifier string `json:"ExternalIdentifier"`
 	} `json:"AccountIdentifier" validate:"required"`
-	Errors           map[string]string `json:"Errors" validate:"required"`
-	OwnerName        string            `json:"OwnerName"`
-	TimestampCreated clearbank.Time    `json:"TimestampCreated" validate:"required"`
+	Errors    map[string]string `json:"Errors" validate:"required"`
+	OwnerName string            `json:"OwnerName"`
+	Timestamp clearbank.Time    `json:"Timestamp" validate:"required"`
 }
