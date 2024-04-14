@@ -385,6 +385,13 @@ type TransactionResponseData struct {
 	} `json:"ultimateRemitterAccount"`
 }
 
+func (r TransactionResponseData) GetAmount() float64 {
+	if r.DebitCreditCode == "CRDT" {
+		return r.Amount.InstructedAmount
+	}
+	return -r.Amount.InstructedAmount
+}
+
 type TransactionResponse struct {
 	Transaction TransactionResponseData `json:"transaction"`
 }
