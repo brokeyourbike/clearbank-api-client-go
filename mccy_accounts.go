@@ -74,6 +74,14 @@ type MCCYAccountResponse struct {
 	StatusInformation string                  `json:"statusInformation"`
 }
 
+// GetIdentifier returns first identifier.
+func (r MCCYAccountResponse) GetIdentifier() string {
+	if len(r.Identifiers) > 0 {
+		return r.Identifiers[0].Identifier
+	}
+	return ""
+}
+
 func (c *client) FetchMCCYAccount(ctx context.Context, accountID uuid.UUID) (data MCCYAccountResponse, err error) {
 	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/MC", accountID.String()), nil)
 	if err != nil {
@@ -87,19 +95,7 @@ func (c *client) FetchMCCYAccount(ctx context.Context, accountID uuid.UUID) (dat
 }
 
 type MCCYAccountsResponse struct {
-	Accounts []struct {
-		ID                uuid.UUID               `json:"id"`
-		Name              string                  `json:"name"`
-		Label             string                  `json:"label"`
-		Owner             string                  `json:"owner"`
-		Kind              MCCYAccountKind         `json:"kind"`
-		Currencies        []string                `json:"currencies"`
-		Identifiers       []MCCYAccountIdentifier `json:"identifiers"`
-		Status            MCCYAccountStatus       `json:"status"`
-		StatusReason      string                  `json:"statusReason"`
-		StatusInformation string                  `json:"statusInformation"`
-		Type              string                  `json:"type"`
-	} `json:"accounts"`
+	Accounts []MCCYAccountResponse `json:"accounts"`
 }
 
 func (c *client) FetchMCCYAccounts(ctx context.Context, pageNum int, pageSize int) (data MCCYAccountsResponse, err error) {
@@ -268,6 +264,14 @@ type MCCYVirtualAccountResponse struct {
 	Status            MCCYAccountStatus       `json:"status"`
 	StatusReason      string                  `json:"statusReason"`
 	StatusInformation string                  `json:"statusInformation"`
+}
+
+// GetIdentifier returns first identifier.
+func (r MCCYVirtualAccountResponse) GetIdentifier() string {
+	if len(r.Identifiers) > 0 {
+		return r.Identifiers[0].Identifier
+	}
+	return ""
 }
 
 func (c *client) FetchMCCYVirtualAccount(ctx context.Context, virtualAccountID uuid.UUID) (data MCCYVirtualAccountResponse, err error) {
