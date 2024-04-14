@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.9.0...v0.10.0) (2024-04-14)
+
+
+### Features
+
+* get identifier helper ([eb4e859](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/eb4e859d72b7126f2a837886cc8ad06f7bb573a8))
+
 ## [0.9.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.8.1...v0.9.0) (2024-04-13)
 
 
