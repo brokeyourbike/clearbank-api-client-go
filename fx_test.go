@@ -49,7 +49,7 @@ func TestExecuteFxQuote(t *testing.T) {
 	ctx := clearbank.RequestIdContext(context.TODO(), "123")
 	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
 
-	resp := &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(bytes.NewReader(nil))}
+	resp := &http.Response{StatusCode: http.StatusAccepted, Body: io.NopCloser(bytes.NewReader(nil))}
 	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
 
 	assert.NoError(t, client.ExecuteFxQuote(ctx, clearbank.FXPayload{}))
@@ -63,7 +63,7 @@ func TestExecuteFxQuote_RequestIdFromCtx(t *testing.T) {
 	ctx := clearbank.RequestIdContext(context.TODO(), "123")
 	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
 
-	resp := &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(bytes.NewReader(nil))}
+	resp := &http.Response{StatusCode: http.StatusAccepted, Body: io.NopCloser(bytes.NewReader(nil))}
 	mockHttpClient.On("Do", mock.MatchedBy(func(req *http.Request) bool { return slices.Contains(req.Header["X-Request-Id"], "123") })).Return(resp, nil).Once()
 
 	assert.NoError(t, client.ExecuteFxQuote(ctx, clearbank.FXPayload{}))
@@ -80,7 +80,7 @@ func TestExecuteFxQuote_RequestIdFromFunc(t *testing.T) {
 	ctx := context.TODO()
 	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
 
-	resp := &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(bytes.NewReader(nil))}
+	resp := &http.Response{StatusCode: http.StatusAccepted, Body: io.NopCloser(bytes.NewReader(nil))}
 	mockHttpClient.On("Do", mock.MatchedBy(func(req *http.Request) bool { return slices.Contains(req.Header["X-Request-Id"], "456") })).Return(resp, nil).Once()
 
 	assert.NoError(t, client.ExecuteFxQuote(ctx, clearbank.FXPayload{}))
@@ -97,7 +97,7 @@ func TestExecuteFxQuote_RequestIdFromCtxAndFunc(t *testing.T) {
 	ctx := clearbank.RequestIdContext(context.TODO(), "123")
 	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
 
-	resp := &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(bytes.NewReader(nil))}
+	resp := &http.Response{StatusCode: http.StatusAccepted, Body: io.NopCloser(bytes.NewReader(nil))}
 	// ctx takex priority and overrides the func
 	mockHttpClient.On("Do", mock.MatchedBy(func(req *http.Request) bool { return slices.Contains(req.Header["X-Request-Id"], "123") })).Return(resp, nil).Once()
 
