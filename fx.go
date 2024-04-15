@@ -123,6 +123,6 @@ func (c *client) ExecuteFxQuote(ctx context.Context, payload FXPayload) (err err
 		return fmt.Errorf("failed to create request: %w", err)
 	}
 
-	req.ExpectStatus(http.StatusOK)
+	req.ExpectStatus(http.StatusAccepted)
 	return c.do(ctx, req)
 }
