@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	_ "embed"
+	"encoding/json"
 	"io"
 	"net/http"
 	"slices"
@@ -126,4 +127,18 @@ func TestFXQuoteResponse(t *testing.T) {
 
 	r2 := clearbank.FXQuoteResponse{SellCurrency: "EUR", BuyCurrency: "GBP", CurrencyPair: "GBP/EUR", ExchangeRate: 1.23}
 	require.Equal(t, 1/1.23, r2.GetRate())
+}
+
+func TestFXQuotePayload(t *testing.T) {
+	p1 := clearbank.FXQuotePayload{BuyCurrency: "USD", SellCurrency: "GBP"}
+	got1, err := json.Marshal(p1)
+	require.NoError(t, err)
+	require.Equal(t, `{"SellCurrency":"GBP","BuyCurrency":"USD","InstructedAmount":0,"FixedSide":"","ValueDate":""}`, string(got1))
+
+	margin := 0.002
+
+	p2 := clearbank.FXQuotePayload{BuyCurrency: "USD", SellCurrency: "GBP", Margin: &margin}
+	got2, err := json.Marshal(p2)
+	require.NoError(t, err)
+	require.Equal(t, `{"SellCurrency":"GBP","BuyCurrency":"USD","InstructedAmount":0,"FixedSide":"","ValueDate":"","Margin":0.002}`, string(got2))
 }

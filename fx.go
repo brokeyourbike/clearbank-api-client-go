@@ -72,11 +72,12 @@ const (
 )
 
 type FXQuotePayload struct {
-	SellCurrency     string
-	BuyCurrency      string
-	InstructedAmount float64
-	FixedSide        QuoteFixedSide
-	ValueDate        string
+	SellCurrency     string         `json:"SellCurrency"`
+	BuyCurrency      string         `json:"BuyCurrency"`
+	InstructedAmount float64        `json:"InstructedAmount"`
+	FixedSide        QuoteFixedSide `json:"FixedSide"`
+	ValueDate        string         `json:"ValueDate"`
+	Margin           *float64       `json:"Margin,omitempty"`
 }
 
 type FXQuoteResponse struct {
