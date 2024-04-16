@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.11.1...v0.12.0) (2024-04-16)
+
+
+### Features
+
+* quote margin ([a2d7a47](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/a2d7a4790f580625a4392c56fedda7b3424e1f0b))
+
 ### [0.11.1](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.11.0...v0.11.1) (2024-04-15)
 
 
