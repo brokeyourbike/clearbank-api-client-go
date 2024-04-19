@@ -312,6 +312,7 @@ func (c *client) FetchMCCYTransaction(ctx context.Context, trxID uuid.UUID) (dat
 	}
 
 	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
 	return data, c.do(ctx, req)
 }
 
