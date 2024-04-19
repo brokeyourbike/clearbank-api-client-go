@@ -144,7 +144,6 @@ func (c *client) InitiateFPSTransactions(ctx context.Context, payload CreateTran
 
 	req.ExpectStatus(http.StatusAccepted)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
 
@@ -241,7 +240,6 @@ func (c *client) InitiateCHAPSPayment(ctx context.Context, payload CreateCHAPSPa
 
 	req.ExpectStatus(http.StatusAccepted)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
 
@@ -328,7 +326,6 @@ func (c *client) InitiateFPSPaymentOriginatedOverseas(ctx context.Context, paylo
 
 	req.ExpectStatus(http.StatusAccepted)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
 

@@ -282,7 +282,6 @@ func (c *client) FetchMCCYVirtualAccount(ctx context.Context, virtualAccountID u
 
 	req.ExpectStatus(http.StatusOK)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
 
@@ -300,7 +299,6 @@ func (c *client) FetchMCCYVirtualAccounts(ctx context.Context, pageNum int, page
 	req.AddQueryParam("pageSize", strconv.Itoa(pageSize))
 	req.ExpectStatus(http.StatusOK)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
 
@@ -319,7 +317,6 @@ func (c *client) CreateMCCYVirtualAccount(ctx context.Context, payload CreateMCC
 
 	req.ExpectStatus(http.StatusCreated)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
 
@@ -335,7 +332,6 @@ func (c *client) UpdateMCCYVirtualAccount(ctx context.Context, virtualAccountID 
 
 	req.ExpectStatus(http.StatusOK)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
 
@@ -353,7 +349,6 @@ func (c *client) UpdateMCCYVirtualAccountStatus(ctx context.Context, virtualAcco
 
 	req.ExpectStatus(http.StatusOK)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
 

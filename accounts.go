@@ -121,7 +121,6 @@ func (c *client) CreateAccount(ctx context.Context, payload CreateAccountPayload
 
 	req.ExpectStatus(http.StatusCreated)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
 
@@ -166,7 +165,6 @@ func (c *client) FetchVirtualAccountsFor(ctx context.Context, accountID uuid.UUI
 	req.AddQueryParam("pageSize", strconv.Itoa(pageSize))
 	req.ExpectStatus(http.StatusOK)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
 

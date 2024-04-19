@@ -250,6 +250,7 @@ func (c *client) InitiateMCCYInboundPayment(ctx context.Context, accountUniqueID
 	}
 
 	req.ExpectStatus(http.StatusCreated)
+	req.DecodeTo(&data)
 	return data, c.do(ctx, req)
 }
 
@@ -327,6 +328,7 @@ func (c *client) FetchMCCYTransactionsForAccount(ctx context.Context, accountID 
 	params.ApplyFor(req)
 	req.AddQueryParam("currency", currency)
 	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
 	return data, c.do(ctx, req)
 }
 
@@ -339,5 +341,6 @@ func (c *client) FetchMCCYTransactionsForVirtualAccount(ctx context.Context, vir
 	params.ApplyFor(req)
 	req.AddQueryParam("currency", currency)
 	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
 	return data, c.do(ctx, req)
 }

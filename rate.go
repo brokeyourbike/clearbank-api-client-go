@@ -49,7 +49,6 @@ func (c *client) FetchMarketrate(ctx context.Context, params MarketrateParams) (
 
 	req.ExpectStatus(http.StatusOK)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
 
@@ -65,6 +64,5 @@ func (c *client) Negotiate(ctx context.Context) (data NegotiateResponse, err err
 
 	req.ExpectStatus(http.StatusOK)
 	req.DecodeTo(&data)
-
 	return data, c.do(ctx, req)
 }
