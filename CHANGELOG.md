@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.12.2](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.12.1...v0.12.2) (2024-04-19)
+
+
+### Bug Fixes
+
+* decode ([ffa1950](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/ffa1950deee59eda34723771077914d783fbe8fd))
+
 ### [0.12.1](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.12.0...v0.12.1) (2024-04-19)
 
 
