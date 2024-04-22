@@ -27,6 +27,11 @@ type FXAccount struct {
 	IBAN  string `json:"iban"`
 }
 
+type FXTradeInformationMargin struct {
+	Amount  float64   `json:"amount"`
+	Account FXAccount `json:"account"`
+}
+
 type FXTradeInformation struct {
 	ValueDate string `json:"valueDate,omitempty"`
 	Details   struct {
@@ -35,12 +40,9 @@ type FXTradeInformation struct {
 		SellCurrency     string    `json:"sellCurrency"`
 		BuyCurrency      string    `json:"buyCurrency"`
 	} `json:"details"`
-	Margin struct {
-		Amount  float64   `json:"amount"`
-		Account FXAccount `json:"account"`
-	} `json:"margin,omitempty"`
-	EndToEndID              string `json:"endToEndId"`
-	UnstructuredInformation string `json:"unstructuredInformation,omitempty"`
+	Margin                  *FXTradeInformationMargin `json:"margin,omitempty"`
+	EndToEndID              string                    `json:"endToEndId"`
+	UnstructuredInformation string                    `json:"unstructuredInformation,omitempty"`
 }
 
 type FXPayload struct {
