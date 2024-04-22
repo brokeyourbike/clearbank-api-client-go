@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.13.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.12.2...v0.13.0) (2024-04-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* trade info margin
+
+### Bug Fixes
+
+* trade info margin ([75ee623](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/75ee6231c711231d2bdb4716b8e8f989c867f1aa))
+
 ### [0.12.2](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.12.1...v0.12.2) (2024-04-19)
 
 
