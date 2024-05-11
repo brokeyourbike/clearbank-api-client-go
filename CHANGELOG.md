@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.13.0...v0.14.0) (2024-05-11)
+
+
+### Features
+
+* rate not available ([c6c3907](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/c6c39073fc26606650a32749cb97b69ec0048c5b))
+
 ## [0.13.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.12.2...v0.13.0) (2024-04-22)
 
 
