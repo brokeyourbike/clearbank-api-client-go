@@ -33,6 +33,17 @@ type MarketrateResponse struct {
 	ValueDate  Time    `json:"valueDate"`
 }
 
+func MarketrateNotAvailableError(err error) bool {
+	switch e := err.(type) {
+	case UnexpectedResponse:
+		switch e.Status {
+		case http.StatusNotFound, http.StatusBadRequest:
+			return true
+		}
+	}
+	return false
+}
+
 func (c *client) FetchMarketrate(ctx context.Context, params MarketrateParams) (data MarketrateResponse, err error) {
 	req, err := c.newRequest(ctx, http.MethodGet, "/fx/v1/marketrate", nil)
 	if err != nil {
