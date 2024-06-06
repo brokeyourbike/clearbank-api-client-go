@@ -1,0 +1,51 @@
+{
+    "transactionId": "cbe94f68-ffa4-452e-99af-024b13fc56c8",
+    "accountId": "0f129da0-b072-4d8a-8cf4-3b7b879a7557",
+    "virtualAccountId": "8e599dc8-cd35-49e4-81cc-b6ddd6ef7d16",
+    "endToEndId": "ABC123",
+    "reference": "REF123",
+    "ultimateBeneficiary": {
+        "accountIdentifiers": [
+            {
+                "identifier": "GB1234567891234123412",
+                "kind": "Descriptor"
+            }
+        ],
+        "payeeName": "EXAMPLE CORP"
+    },
+    "ultimateRemitter": {
+        "accountIdentifiers": [
+            {
+                "identifier": "LT123456789012341234",
+                "kind": "Descriptor"
+            }
+        ],
+        "payerName": "ABC CORP"
+    },
+    "amount": 60000,
+    "currency": "EUR",
+    "currencyExchange": null,
+    "actualPaymentMethod": "Partner 1",
+    "requestedPaymentMethod": "Wire Payment",
+    "kind": "Payment",
+    "createdAt": "2024-06-06T13:04:48.1234+00:00",
+    "identifiers": [
+        {
+            "scope": "Scheme Payment Method",
+            "name": "EndToEndId",
+            "identifier": "CHASDEFX"
+        }
+    ],
+    "additionalProperties": [
+        {
+            "key": "Origin",
+            "value": "Automated"
+        }
+    ],
+    "settledAt": "2024-06-06T13:04:48.1234+00:00",
+    "valueAt": "2024-06-06T13:04:48.1234+00:00",
+    "cancelledAt": null,
+    "cancellationCode": null,
+    "reason": null,
+    "status": "Settled"
+}
