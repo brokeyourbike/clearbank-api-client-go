@@ -17,12 +17,12 @@ var badRequestValidationNoErrors []byte
 
 func TestUnexpectedResponse(t *testing.T) {
 	resp := clearbank.UnexpectedResponse{Status: 500, Body: "I am an error."}
-	assert.Equal(t, resp.Error(), "Unexpected response from API. status: 500 body: I am an error.")
+	assert.Equal(t, "Unexpected response from API. Status: 500 Body: I am an error.", resp.Error())
 }
 
 func TestErrResponse(t *testing.T) {
 	resp := clearbank.ErrResponse{Status: 500, Type: "abcd", Title: "I am an error."}
-	assert.Equal(t, resp.Error(), "Error during API call. status: 500 type: abcd title: I am an error.")
+	assert.Equal(t, "Error during API call. Status: 500 Type: abcd Title: I am an error.", resp.Error())
 }
 
 func TestErrResponse_Errors(t *testing.T) {
@@ -42,5 +42,5 @@ func TestErrResponse_NoErrors(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Len(t, resp.Errors, 0)
-	assert.Equal(t, "Error during API call. Status: 400 Type: https://tools.ietf.org/html/rfc7231#section-6.5.1 Title: One or more validation errors occurred. Errors: map[]", resp.Error())
+	assert.Equal(t, "Error during API call. Status: 400 Type: https://tools.ietf.org/html/rfc7231#section-6.5.1 Title: One or more validation errors occurred.", resp.Error())
 }
