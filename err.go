@@ -21,5 +21,5 @@ type ErrResponse struct {
 }
 
 func (e ErrResponse) Error() string {
-	return fmt.Sprintf("Error during API call. status: %d type: %s title: %s", e.Status, e.Type, e.Title)
+	return fmt.Sprintf("Error during API call. Status: %d Type: %s Title: %s Errors: %s", e.Status, e.Type, e.Title, e.Errors)
 }

@@ -33,6 +33,7 @@ func TestErrResponse_Errors(t *testing.T) {
 	assert.Len(t, resp.Errors, 2)
 	assert.Equal(t, resp.Errors["DebitAccountIban"][0], "Debit Account IBAN must be populated and should be in a valid IBAN format")
 	assert.Equal(t, resp.Errors["CreditAccountIban"][0], "Credit Account IBAN must be populated and should be in a valid IBAN format")
+	assert.Equal(t, "Error during API call. Status: 400 Type: https://tools.ietf.org/html/rfc7231#section-6.5.1 Title: One or more validation errors occurred. Errors: map[CreditAccountIban:[Credit Account IBAN must be populated and should be in a valid IBAN format] DebitAccountIban:[Debit Account IBAN must be populated and should be in a valid IBAN format]]", resp.Error())
 }
 
 func TestErrResponse_NoErrors(t *testing.T) {
@@ -41,4 +42,5 @@ func TestErrResponse_NoErrors(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Len(t, resp.Errors, 0)
+	assert.Equal(t, "Error during API call. Status: 400 Type: https://tools.ietf.org/html/rfc7231#section-6.5.1 Title: One or more validation errors occurred. Errors: map[]", resp.Error())
 }
