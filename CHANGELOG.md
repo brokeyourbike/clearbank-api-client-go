@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.15.0...v0.16.0) (2024-06-23)
+
+
+### Features
+
+* virt account ([9799405](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/9799405ba035cbc8f248bd9aceec5966fbba53d1))
+
 ## [0.15.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.14.0...v0.15.0) (2024-06-19)
 
 
