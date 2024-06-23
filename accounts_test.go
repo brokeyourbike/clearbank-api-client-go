@@ -24,6 +24,9 @@ var accountsSuccess []byte
 //go:embed testdata/account-create-success.json
 var accountCreateSuccess []byte
 
+//go:embed testdata/account-fetch-virtual-account.json
+var accountFetchVirtualAccountSuccess []byte
+
 func TestFetchAccount(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
@@ -94,4 +97,20 @@ func TestCreateAccount_RequestErr(t *testing.T) {
 	_, err := client.CreateAccount(nil, clearbank.CreateAccountPayload{}) //lint:ignore SA1012 testing failure
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "failed to create request")
+}
+
+func TestFetchVirtualAccount(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
+
+	resp := &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(bytes.NewReader(accountFetchVirtualAccountSuccess))}
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
+
+	accountID := uuid.MustParse("9cd1ae28-1db1-447c-8775-32e355234e9d")
+	virtualAccountID := uuid.MustParse("8c3748d3-48c1-4e20-a092-cf09d3faf58c")
+
+	got, err := client.FetchVirtualAccount(context.TODO(), accountID, virtualAccountID)
+	require.NoError(t, err)
+	assert.Equal(t, virtualAccountID, got.Account.ID)
+	assert.Equal(t, clearbank.VirtualAccountStatusDisabled, got.Account.Status)
 }

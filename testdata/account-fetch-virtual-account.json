@@ -1,0 +1,31 @@
+{
+    "account": {
+        "id": "8c3748d3-48c1-4e20-a092-cf09d3faf58c",
+        "name": "JOHN DOE",
+        "label": "JOHN DOE",
+        "type": "CACC",
+        "status": "Disabled",
+        "currency": [
+            "GBP"
+        ],
+        "iban": "GB1234567",
+        "bban": "CLRB1234567"
+    },
+    "halLinks": [
+        {
+            "name": "self",
+            "href": "https://institution-api-sim.clearbank.co.uk/v2/Accounts/9cd1ae28-1db1-447c-8775-32e355234e9d/Virtual/8c3748d3-48c1-4e20-a092-cf09d3faf58c",
+            "templated": false
+        },
+        {
+            "name": "Account",
+            "href": "https://institution-api-sim.clearbank.co.uk/v2/Accounts/9cd1ae28-1db1-447c-8775-32e355234e9d",
+            "templated": false
+        },
+        {
+            "name": "VirtualAccounts",
+            "href": "https://institution-api-sim.clearbank.co.uk/v2/Accounts/9cd1ae28-1db1-447c-8775-32e355234e9d/Virtual",
+            "templated": false
+        }
+    ]
+}

@@ -145,13 +145,15 @@ func (c *client) UpdateAccount(ctx context.Context, accountID uuid.UUID, payload
 }
 
 type VirtualAccountResponse struct {
-	ID         uuid.UUID            `json:"id"`
-	Name       string               `json:"name"`
-	Owner      string               `json:"label"`
-	Type       string               `json:"type"`
-	Status     VirtualAccountStatus `json:"status"`
-	Currencies []string             `json:"currency"`
-	IBAN       string               `json:"iban"`
+	Account struct {
+		ID         uuid.UUID            `json:"id"`
+		Name       string               `json:"name"`
+		Owner      string               `json:"label"`
+		Type       string               `json:"type"`
+		Status     VirtualAccountStatus `json:"status"`
+		Currencies []string             `json:"currency"`
+		IBAN       string               `json:"iban"`
+	} `json:"account"`
 }
 
 func (c *client) FetchVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID) (data VirtualAccountResponse, err error) {
