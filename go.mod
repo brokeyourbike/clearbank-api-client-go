@@ -3,7 +3,7 @@ module github.com/brokeyourbike/clearbank-api-client-go
 go 1.22
 
 require (
-	cloud.google.com/go/kms v1.17.1
+	cloud.google.com/go/kms v1.18.0
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/google/uuid v1.6.0
 	github.com/googleapis/gax-go/v2 v2.12.5
