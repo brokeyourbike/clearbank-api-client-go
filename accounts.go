@@ -17,10 +17,11 @@ type AccountsClient interface {
 	UpdateAccount(ctx context.Context, accountID uuid.UUID, payload UpdateAccountPayload) error
 
 	// virtual accounts
+	FetchVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID) (VirtualAccountResponse, error)
 	FetchVirtualAccountsFor(ctx context.Context, accountID uuid.UUID, pageNum int, pageSize int) (VirtualAccountsResponse, error)
 	CreateVirtualAccounts(ctx context.Context, accountID uuid.UUID, payload CreateVirtualAccountsPayload) error
-	UpdateVirtualAccount(ctx context.Context, accountID uuid.UUID, virtualAccountID uuid.UUID, payload UpdateVirtualAccountPayload) error
-	DisableVirtualAccount(ctx context.Context, accountID uuid.UUID, virtualAccountID uuid.UUID) error
+	UpdateVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, payload UpdateVirtualAccountPayload) error
+	DisableVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID) error
 }
 
 type AccountStatus string
@@ -141,6 +142,27 @@ func (c *client) UpdateAccount(ctx context.Context, accountID uuid.UUID, payload
 
 	req.ExpectStatus(http.StatusNoContent)
 	return c.do(ctx, req)
+}
+
+type VirtualAccountResponse struct {
+	ID         uuid.UUID            `json:"id"`
+	Name       string               `json:"name"`
+	Owner      string               `json:"label"`
+	Type       string               `json:"type"`
+	Status     VirtualAccountStatus `json:"status"`
+	Currencies []string             `json:"currency"`
+	IBAN       string               `json:"iban"`
+}
+
+func (c *client) FetchVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID) (data VirtualAccountResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodGet, fmt.Sprintf("/v2/Accounts/%s/Virtual/%s", accountID, virtualAccountID), nil)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+	return data, c.do(ctx, req)
 }
 
 type VirtualAccountsResponse struct {
