@@ -228,3 +228,39 @@ type PaymentMessageValidationFailedPayload struct {
 		} `json:"Creditors" validate:"required"`
 	} `json:"AccountIdentification" validate:"required"`
 }
+
+// InboundHeldTransactionPayload
+// This webhook confirms the inbound transaction has been held
+type InboundHeldTransactionPayload struct {
+	Scheme  string `json:"Scheme" validate:"required"`
+	Account struct {
+		IBAN string `json:"IBAN" validate:"required"`
+		BBAN string `json:"BBAN" validate:"required"`
+	} `json:"Account" validate:"required"`
+	CounterpartAccount struct {
+		IBAN string `json:"IBAN" validate:"required"`
+		BBAN string `json:"BBAN" validate:"required"`
+	} `json:"CounterpartAccount" validate:"required"`
+	TransactionAmount     float64        `json:"TransactionAmount"`
+	PaymentReference      string         `json:"PaymentReference"`
+	EndToEndTransactionID string         `json:"EndToEndTransactionID"`
+	TimestampCreated      clearbank.Time `json:"TimestampCreated"`
+}
+
+// OutboundHeldTransactionPayload
+// This webhook confirms the outbound transaction has been held
+type OutboundHeldTransactionPayload struct {
+	Scheme  string `json:"Scheme" validate:"required"`
+	Account struct {
+		IBAN string `json:"IBAN" validate:"required"`
+		BBAN string `json:"BBAN" validate:"required"`
+	} `json:"Account" validate:"required"`
+	CounterpartAccount struct {
+		IBAN string `json:"IBAN" validate:"required"`
+		BBAN string `json:"BBAN" validate:"required"`
+	} `json:"CounterpartAccount" validate:"required"`
+	TransactionAmount     float64        `json:"TransactionAmount"`
+	PaymentReference      string         `json:"PaymentReference"`
+	EndToEndTransactionID string         `json:"EndToEndTransactionID"`
+	TimestampCreated      clearbank.Time `json:"TimestampCreated"`
+}

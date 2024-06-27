@@ -16,6 +16,8 @@ const (
 	PaymentMessageAssesmentFailed  = "PaymentMessageAssesmentFailed"
 	PaymentMessageValidationFailed = "PaymentMessageValidationFailed"
 	TransactionRejected            = "TransactionRejected"
+	OutboundHeldTransaction        = "OutboundHeldTransaction"
+	InboundHeldTransaction         = "InboundHeldTransaction"
 	MCCYAccountCreated             = "Accounts.AccountCreated"
 	MCCYAccountUpdated             = "Accounts.AccountUpdated"
 	MCCYVirtualAccountCreated      = "Accounts.VirtualAccountCreated"
