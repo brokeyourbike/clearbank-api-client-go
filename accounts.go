@@ -15,13 +15,19 @@ type AccountsClient interface {
 	FetchAccounts(ctx context.Context, pageNum int, pageSize int) (AccountsResponse, error)
 	CreateAccount(ctx context.Context, payload CreateAccountPayload) (AccountResponse, error)
 	UpdateAccount(ctx context.Context, accountID uuid.UUID, payload UpdateAccountPayload) error
+	UpdateAccountCOP(ctx context.Context, accountID uuid.UUID, payload UpdateAccountCOPPayload) error
 
 	// virtual accounts
 	FetchVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID) (VirtualAccountResponse, error)
 	FetchVirtualAccountsFor(ctx context.Context, accountID uuid.UUID, pageNum int, pageSize int) (VirtualAccountsResponse, error)
 	CreateVirtualAccounts(ctx context.Context, accountID uuid.UUID, payload CreateVirtualAccountsPayload) error
 	UpdateVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID, payload UpdateVirtualAccountPayload) error
+	UpdateVirtualAccountCOP(ctx context.Context, accountID, virtualAccountID uuid.UUID, payload UpdateAccountCOPPayload) error
 	DisableVirtualAccount(ctx context.Context, accountID, virtualAccountID uuid.UUID) error
+
+	// cop
+	ValidateSRD(ctx context.Context, payload ValidateSRDPayload) (ValidateSRDResponse, error)
+	NameVerification(ctx context.Context, payload NameVerificationPayload) (NameVerificationResponse, error)
 }
 
 type AccountStatus string
@@ -144,6 +150,21 @@ func (c *client) UpdateAccount(ctx context.Context, accountID uuid.UUID, payload
 	return c.do(ctx, req)
 }
 
+type UpdateAccountCOPPayload struct {
+	OptOut       bool   `json:"optOut"`
+	OptOutReason string `json:"optOutReason"`
+}
+
+func (c *client) UpdateAccountCOP(ctx context.Context, accountID uuid.UUID, payload UpdateAccountCOPPayload) error {
+	req, err := c.newRequest(ctx, http.MethodPut, fmt.Sprintf("/v1/Cop/opt/accounts/%s", accountID.String()), payload)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusNoContent)
+	return c.do(ctx, req)
+}
+
 type VirtualAccountResponse struct {
 	Account struct {
 		ID         uuid.UUID            `json:"id"`
@@ -232,6 +253,16 @@ func (c *client) UpdateVirtualAccount(ctx context.Context, accountID uuid.UUID, 
 	return c.do(ctx, req)
 }
 
+func (c *client) UpdateVirtualAccountCOP(ctx context.Context, accountID uuid.UUID, virtualAccountID uuid.UUID, payload UpdateAccountCOPPayload) error {
+	req, err := c.newRequest(ctx, http.MethodPut, fmt.Sprintf("/v1/Cop/opt/accounts/%s/virtual/%s", accountID.String(), virtualAccountID.String()), payload)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusNoContent)
+	return c.do(ctx, req)
+}
+
 func (c *client) DisableVirtualAccount(ctx context.Context, accountID uuid.UUID, virtualAccountID uuid.UUID) error {
 	req, err := c.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/v1/Accounts/%s/Virtual/%s", accountID.String(), virtualAccountID.String()), nil)
 	if err != nil {
@@ -240,4 +271,71 @@ func (c *client) DisableVirtualAccount(ctx context.Context, accountID uuid.UUID,
 
 	req.ExpectStatus(http.StatusNoContent)
 	return c.do(ctx, req)
+}
+
+type ValidateSRDPayload struct {
+	SchemeName     string `json:"SchemeName"`
+	Identification string `json:"Identification"`
+}
+
+type ValidateSRDResponse struct {
+	Data *struct {
+		Required       bool   `json:"Required"`
+		BankName       string `json:"BankName"`
+		Identification string `json:"Identification"`
+	} `json:"Data"`
+	Error *struct {
+		Reason          string `json:"Reason"`
+		ParticipantName string `json:"ParticipantName"`
+	} `json:"Error"`
+}
+
+func (c *client) ValidateSRD(ctx context.Context, payload ValidateSRDPayload) (data ValidateSRDResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPost, "/open-banking/outbound/v1/srd/validate", payload)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+	return data, c.do(ctx, req)
+}
+
+type NameVerificationPayload struct {
+	SchemeName              string `json:"SchemeName"`
+	LegalOwnerType          string `json:"LegalOwnerType"`
+	Identification          string `json:"Identification"`
+	OwnerName               string `json:"OwnerName"`
+	SecondaryIdentification string `json:"SecondaryIdentification"`
+	EndToEndIdentification  string `json:"EndToEndIdentification"`
+}
+
+type NameVerificationResponse struct {
+	Data *struct {
+		VerificationReport struct {
+			Matched                 bool   `json:"Matched"`
+			Name                    string `json:"Name"`
+			ReasonCode              string `json:"ReasonCode"`
+			ReasonCodeDescription   string `json:"ReasonCodeDescription"`
+			MatchedBank             string `json:"MatchedBank"`
+			ResponseWithinSla       bool   `json:"ResponseWithinSla"`
+			LegalOwnerType          string `json:"LegalOwnerType"`
+			ResponderRegistrationId string `json:"ResponderRegistrationId"`
+		} `json:"VerificationReport"`
+	} `json:"Data"`
+	Error *struct {
+		Reason          string `json:"Reason"`
+		ParticipantName string `json:"ParticipantName"`
+	} `json:"Error"`
+}
+
+func (c *client) NameVerification(ctx context.Context, payload NameVerificationPayload) (data NameVerificationResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPost, "/open-banking/outbound/v1/name-verification", payload)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusOK)
+	req.DecodeTo(&data)
+	return data, c.do(ctx, req)
 }
