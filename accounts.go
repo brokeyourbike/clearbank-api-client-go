@@ -306,8 +306,8 @@ type NameVerificationPayload struct {
 	LegalOwnerType          string `json:"LegalOwnerType"`
 	Identification          string `json:"Identification"`
 	OwnerName               string `json:"OwnerName"`
-	SecondaryIdentification string `json:"SecondaryIdentification"`
-	EndToEndIdentification  string `json:"EndToEndIdentification"`
+	SecondaryIdentification string `json:"SecondaryIdentification,omitempty"`
+	EndToEndIdentification  string `json:"EndToEndIdentification,omitempty"`
 }
 
 type NameVerificationResponse struct {
