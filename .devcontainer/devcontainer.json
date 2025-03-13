@@ -5,7 +5,7 @@
     "image": "mcr.microsoft.com/devcontainers/go:1.23",
     "features": {
         "ghcr.io/brokeyourbike/devcontainer-features/staticcheck:0": {
-            "version": "2023.1.5"
+            "version": "2025.1.1"
         },
         "ghcr.io/brokeyourbike/devcontainer-features/mockery-go:0": {
             "version": "2.42.0"
