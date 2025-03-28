@@ -33,11 +33,13 @@ type MCCYAccountsClient interface {
 type MCCYAccountKind string
 
 const (
-	MCCYAccountKindYourFunds            MCCYAccountKind = "YourFunds"
-	MCCYAccountKindGeneralSegregated    MCCYAccountKind = "GeneralSegregated"
-	MCCYAccountKindDesignatedSegregated MCCYAccountKind = "DesignatedSegregated"
-	MCCYAccountKindGeneralClient        MCCYAccountKind = "GeneralClient"
-	MCCYAccountKindDesignatedClient     MCCYAccountKind = "DesignatedClient"
+	MCCYAccountKindYourFunds             MCCYAccountKind = "YourFunds"
+	MCCYAccountKindGeneralSegregated     MCCYAccountKind = "GeneralSegregated"
+	MCCYAccountKindDesignatedSegregated  MCCYAccountKind = "DesignatedSegregated"
+	MCCYAccountKindGeneralClient         MCCYAccountKind = "GeneralClient"
+	MCCYAccountKindDesignatedClient      MCCYAccountKind = "DesignatedClient"
+	MCCYAccountKindGeneralSafeguarded    MCCYAccountKind = "GeneralSafeguarded"
+	MCCYAccountKindDesignatedSafeguarded MCCYAccountKind = "DesignatedSafeguarded"
 )
 
 type MCCYAccountStatus string
