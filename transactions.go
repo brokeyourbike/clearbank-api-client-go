@@ -159,6 +159,30 @@ type Address struct {
 	Country        string `json:"country"`
 }
 
+type CHAPSAccount struct {
+	IBAN           string `json:"iban,omitempty"`
+	SchemeName     string `json:"schemeName,omitempty"`
+	Proprietary    string `json:"proprietary,omitempty"`
+	Identification string `json:"identification,omitempty"`
+}
+
+type OrganisationIdentifier struct {
+	BIC                 string `json:"bic,omitempty"`
+	LEI                 string `json:"lei,omitempty"`
+	OtherIdentification string `json:"otherIdentification,omitempty"`
+}
+
+type PrivateIdentifier struct {
+	OtherIdentification string `json:"otherIdentification,omitempty"`
+}
+
+type CHAPSParty struct {
+	Name                   string                  `json:"name"`
+	Address                Address                 `json:"postalAddress"`
+	OrganisationIdentifier *OrganisationIdentifier `json:"organisationIdentifier,omitempty"`
+	PrivateIdentifier      *PrivateIdentifier      `json:"privateIdentifier,omitempty"`
+}
+
 type CreateCHAPSPaymentPayload struct {
 	// Unique identification, as assigned by you, to unambiguously identify the payment instruction.
 	InstructionIdentification string `json:"instructionIdentification"`
@@ -177,43 +201,22 @@ type CreateCHAPSPaymentPayload struct {
 	// The ClearBank account that will be credited or debited
 	// based on the successful completion of the payment instruction.
 	// You need to include EITHER the iban field OR the schemeName and identification fields in this object.
-	SourceAccount struct {
-		IBAN           string `json:"iban,omitempty"`
-		SchemeName     string `json:"schemeName,omitempty"`
-		Proprietary    string `json:"proprietary,omitempty"`
-		Identification string `json:"identification,omitempty"`
-	} `json:"sourceAccount"`
+	SourceAccount CHAPSAccount `json:"sourceAccount"`
 
 	// Unambiguous identification of the account of the debtor
 	// to which a debit entry will be made as a result of the transaction.
 	// You need to include EITHER the iban field OR the schemeName and identification fields in this object.
-	DebtorAccount struct {
-		IBAN           string `json:"iban,omitempty"`
-		SchemeName     string `json:"schemeName,omitempty"`
-		Proprietary    string `json:"proprietary,omitempty"`
-		Identification string `json:"identification,omitempty"`
-	} `json:"debtorAccount"`
+	DebtorAccount CHAPSAccount `json:"debtorAccount"`
 
 	// Unambiguous identification of the account of the creditor
 	// to which a credit entry will be posted as a result of the payment transaction.
-	CreditorAccount struct {
-		IBAN           string `json:"iban,omitempty"`
-		SchemeName     string `json:"schemeName,omitempty"`
-		Proprietary    string `json:"proprietary,omitempty"`
-		Identification string `json:"identification,omitempty"`
-	} `json:"creditorAccount"`
+	CreditorAccount CHAPSAccount `json:"creditorAccount"`
 
 	// Party that is owed an amount of money by the (ultimate) debtor.
-	Creditor struct {
-		Name    string   `json:"name"`
-		Address *Address `json:"postalAddress,omitempty"`
-	} `json:"creditor"`
+	Creditor CHAPSParty `json:"creditor"`
 
 	// Party that owes an amount of money to the (ultimate) creditor.
-	Debtor struct {
-		Name    string  `json:"name"`
-		Address Address `json:"postalAddress"`
-	} `json:"debtor"`
+	Debtor CHAPSParty `json:"debtor"`
 
 	// Underlying reason for the payment transaction, as published in an external purpose code list.
 	Purpose string `json:"purpose,omitempty"`
@@ -233,7 +236,87 @@ type PaymentInitiatedResponse struct {
 }
 
 func (c *client) InitiateCHAPSPayment(ctx context.Context, payload CreateCHAPSPaymentPayload) (data PaymentInitiatedResponse, err error) {
-	req, err := c.newRequest(ctx, http.MethodPost, "/payments/chaps/v4/customer-payments", payload)
+	req, err := c.newRequest(ctx, http.MethodPost, "/payments/chaps/v5/customer-payments", payload)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusAccepted)
+	req.DecodeTo(&data)
+	return data, c.do(ctx, req)
+}
+
+type ReturnCHAPSPaymentPayload struct {
+	PaymentID                 string `json:"paymentId"`
+	Reason                    string `json:"reason"`
+	InstructionIdentification string `json:"instructionIdentification"`
+}
+
+func (c *client) ReturnCHAPSPayment(ctx context.Context, payload ReturnCHAPSPaymentPayload) (data PaymentInitiatedResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPost, "/payments/chaps/v5/return-payments", payload)
+	if err != nil {
+		return data, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusAccepted)
+	req.DecodeTo(&data)
+	return data, c.do(ctx, req)
+}
+
+type SimulateCHAPSPaymentPayload struct {
+	// Unique identification, as assigned by an instructing party for an instructed party, to unambiguously identify the instruction.
+	InstructionIdentification string `json:"instructionIdentification"`
+
+	// Unique identification, as assigned by the initiating party, to unambiguously identify the transaction.
+	// This identification is passed on, unchanged, throughout the entire end-to-end chain.
+	EndToEndIdentification string `json:"endToEndIdentification"`
+
+	// Amount of money to be moved between the debtor and creditor,
+	// before deduction of charges, expressed in the currency as ordered by the initiating party.
+	InstructedAmount struct {
+		Amount   float64 `json:"amount"`
+		Currency string  `json:"currency"`
+	} `json:"instructedAmount"`
+
+	// Valid BIC for the debtor account.
+	DebtorBIC string `json:"debtorBic"`
+
+	// Unambiguous identification of the account of the debtor to which a debit entry will be made as a result of the transaction.
+	// You need to include EITHER the iban field OR the schemeName and identification fields in this object.
+	DebtorAccount CHAPSAccount `json:"debtorAccount"`
+
+	// Party that owes an amount of money to the (ultimate) creditor.
+	Debtor CHAPSParty `json:"debtor"`
+
+	// Valid BIC for the creditor account.
+	CreditorBIC string `json:"creditorBic"`
+
+	// Unambiguous identification of the account of the creditor to which a credit entry will be made as a result of the transaction.
+	// You need to include EITHER the iban field OR the schemeName and identification fields in this object.
+	CreditorAccount CHAPSAccount `json:"creditorAccount"`
+
+	// Party that is owed an amount of money by the (ultimate) debtor.
+	Creditor CHAPSParty `json:"creditor"`
+
+	// Underlying reason for the payment transaction, as published in an external purpose code list.
+	Purpose string `json:"purpose"`
+
+	// Category purpose, in a proprietary form.
+	CategoryPurpose string `json:"categoryPurpose"`
+
+	// Information supplied to enable the matching of an entry with the items that the transfer is intended to settle,
+	// such as commercial invoices in an accounts' receivable system.
+	RemittanceInformation struct {
+		CreditorReferenceInformation string `json:"creditorReferenceInformation"`
+	} `json:"remittanceInformation"`
+}
+
+type SimulatedCHAPSPaymentResponse struct {
+	UETR string `json:"uetr"`
+}
+
+func (c *client) SimulateCHAPSPayment(ctx context.Context, payload SimulateCHAPSPaymentPayload) (data SimulatedCHAPSPaymentResponse, err error) {
+	req, err := c.newRequest(ctx, http.MethodPost, "/inbound-payment-simulation/chaps/v1/customer-payments", payload)
 	if err != nil {
 		return data, fmt.Errorf("failed to create request: %w", err)
 	}
