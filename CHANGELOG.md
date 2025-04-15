@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.22.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.21.0...v0.22.0) (2025-04-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* chaps v5
+
+### Features
+
+* chaps v5 ([f530cb1](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/f530cb15343b4ff6ecfef7d4117460cc584cd564))
+
 ## [0.21.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.20.0...v0.21.0) (2025-03-28)
 
 
