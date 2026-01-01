@@ -13,24 +13,18 @@ jobs:
     timeout-minutes: 5
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-go@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-go@v6
       with:
         go-version-file: 'go.mod'
-    - uses: brokeyourbike/go-mockery-action@v0.1
+    - uses: brokeyourbike/go-mockery-action@v0.2
       with:
         mockery-version: '2.53.3'
     - run: make mock
     - run: go build -v ./...
     - run: go test -race -covermode=atomic -coverprofile=coverage.out -v ./...
 
-    - uses: paambaati/codeclimate-action@v5
+    - uses: codecov/codecov-action@v5
       continue-on-error: true
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TOKEN }}
       with:
-        prefix: 'github.com/brokeyourbike/clearbank-api-client-go'
-        coverageLocations: ./coverage.out:gocov
-
-    - uses: codecov/codecov-action@v3
-      continue-on-error: true
+        token: ${{ secrets.CODECOV_TOKEN }}

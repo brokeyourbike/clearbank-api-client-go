@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
-      - uses: brokeyourbike/go-mockery-action@v0.1
+      - uses: brokeyourbike/go-mockery-action@v0.2
         with:
           mockery-version: '2.53.3'
       - run: make mock
