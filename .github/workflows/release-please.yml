@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: google-github-actions/release-please-action@v2
+      - uses: googleapis/release-please-action@v4
         with:
           release-type: go
           bump-minor-pre-major: true
