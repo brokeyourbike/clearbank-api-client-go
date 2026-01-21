@@ -14,6 +14,7 @@ type BacsClient interface {
 	CancelAccountMandate(ctx context.Context, accountID, mandateID uuid.UUID, reason string) error
 
 	FetchVirtualAccountMandates(ctx context.Context, accountID, virtualAccountID uuid.UUID, pageNum int, pageSize int) (MandatesResponse, error)
+	CancelVirtualAccountMandate(ctx context.Context, accountID, virtualAccountID, mandateID uuid.UUID, reason string) error
 }
 
 type MandatesResponse struct {
@@ -76,4 +77,15 @@ func (c *client) FetchVirtualAccountMandates(ctx context.Context, accountID, vir
 	req.DecodeTo(&data)
 
 	return data, c.do(ctx, req)
+}
+
+func (c *client) CancelVirtualAccountMandate(ctx context.Context, accountID, virtualAccountID, mandateID uuid.UUID, reason string) error {
+	payload := cancelMandatePayload{ReasonCode: reason}
+	req, err := c.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/v2/Accounts/%s/Virtual/%s/Mandates/%s", accountID, virtualAccountID, mandateID), payload)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusAccepted)
+	return c.do(ctx, req)
 }
