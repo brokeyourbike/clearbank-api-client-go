@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.23.1](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.23.0...v0.23.1) (2026-01-21)
+
+
+### Bug Fixes
+
+* bacs client ([545dbeb](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/545dbebb866db7757f2eb6ff74a3da04e8f5e4c5))
+
 ## [0.23.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.22.1...v0.23.0) (2026-01-21)
 
 
