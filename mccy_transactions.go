@@ -10,7 +10,7 @@ import (
 
 type MCCYTransactionsClient interface {
 	InitiateInternalTransaction(context.Context, CreateInternalTransactionPayload) error
-	InitiateMCCYTransactions(context.Context, CreateMCCYTransactionsPayload) error
+	InitiateMCCYTransactions(context.Context, CreateMCCYTransactionsPayload) (InitiateMCCYTransactionsResponse, error)
 	InitiateMCCYInboundPayment(ctx context.Context, accountUniqueID string, payload CreateMCCYInboundPaymentPayload) (MCCYInboundPaymentResponse, error)
 	FetchMCCYTransaction(ctx context.Context, trxID uuid.UUID) (MCCYTransactionResponse, error)
 	FetchMCCYTransactionsForAccount(ctx context.Context, accountID uuid.UUID, currency string, params FetchTransactionsParams) (MCCYTransactionsResponse, error)
@@ -185,14 +185,19 @@ type CreateMCCYTransactionsPayload struct {
 	Transactions []MCCYTransactionPayload `json:"transactions"`
 }
 
-func (c *client) InitiateMCCYTransactions(ctx context.Context, payload CreateMCCYTransactionsPayload) error {
+type InitiateMCCYTransactionsResponse struct {
+	IsScheduled bool `json:"isScheduled"`
+}
+
+func (c *client) InitiateMCCYTransactions(ctx context.Context, payload CreateMCCYTransactionsPayload) (res InitiateMCCYTransactionsResponse, err error) {
 	req, err := c.newRequest(ctx, http.MethodPost, "/v1/mccy/payments", payload)
 	if err != nil {
-		return fmt.Errorf("failed to create request: %w", err)
+		return res, fmt.Errorf("failed to create request: %w", err)
 	}
 
+	req.DecodeTo(&res)
 	req.ExpectStatus(http.StatusAccepted)
-	return c.do(ctx, req)
+	return res, c.do(ctx, req)
 }
 
 type CreateMCCYInboundPaymentPayload struct {

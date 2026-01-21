@@ -46,6 +46,10 @@ func (c *client) FetchAccountMandates(ctx context.Context, accountID uuid.UUID, 
 }
 
 type cancelMandatePayload struct {
+	// 0 - Institution cancelled - refer to payer. Paying bank has cancelled instruction.
+	// 1 - Instruction cancelled by payer. Payer has instructed the paying bank to cancel the DirectDebit Instruction.
+	// 2 - Payer deceased.
+	// B - Account closed. Payer has closed their account for an unknown reason.
 	ReasonCode string `json:"reasonCode"`
 }
 

@@ -31,7 +31,7 @@ func TestInitiateMCCYTransactions_RequestErr(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
 
-	err := client.InitiateMCCYTransactions(nil, clearbank.CreateMCCYTransactionsPayload{}) //lint:ignore SA1012 testing failure
+	_, err := client.InitiateMCCYTransactions(nil, clearbank.CreateMCCYTransactionsPayload{}) //lint:ignore SA1012 testing failure
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "failed to create request")
 }
