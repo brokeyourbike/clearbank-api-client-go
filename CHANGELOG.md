@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.24.0](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.23.1...v0.24.0) (2026-01-21)
+
+
+### Features
+
+* delete mandate ([78d79cc](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/78d79cc47b9735949d172f3c5ac294feb9d9efd1))
+* is scheduled ([e6cfbfc](https://www.github.com/brokeyourbike/clearbank-api-client-go/commit/e6cfbfc91f88bdebb21c25b4a983eeb6f31ad8e1))
+
 ### [0.23.1](https://www.github.com/brokeyourbike/clearbank-api-client-go/compare/v0.23.0...v0.23.1) (2026-01-21)
 
 
