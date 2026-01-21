@@ -39,6 +39,7 @@ type Client interface {
 	MCCYAccountsClient
 	MCCYTransactionsClient
 	FxClient
+	BacsClient
 }
 
 var _ Client = (*client)(nil)
