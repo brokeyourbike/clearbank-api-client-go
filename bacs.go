@@ -81,7 +81,7 @@ func (c *client) FetchVirtualAccountMandates(ctx context.Context, accountID, vir
 
 func (c *client) CancelVirtualAccountMandate(ctx context.Context, accountID, virtualAccountID, mandateID uuid.UUID, reason string) error {
 	payload := cancelMandatePayload{ReasonCode: reason}
-	req, err := c.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/v2/Accounts/%s/Virtual/%s/Mandates/%s", accountID, virtualAccountID, mandateID), payload)
+	req, err := c.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/v1/Accounts/%s/Virtual/%s/Mandates/%s", accountID, virtualAccountID, mandateID), payload)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
