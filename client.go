@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/brokeyourbike/clearbank-api-client-go/signature"
 	"github.com/go-playground/validator/v10"
@@ -149,6 +150,7 @@ func (c *client) newRequest(ctx context.Context, method, url string, body interf
 }
 
 func (c *client) do(ctx context.Context, req *request) error {
+retry:
 	resp, err := c.httpClient.Do(req.req)
 	if err != nil {
 		return fmt.Errorf("failed to send request: %w", err)
@@ -168,6 +170,21 @@ func (c *client) do(ctx context.Context, req *request) error {
 			"http.response.body.content": string(b),
 			"http.response.headers":      resp.Header,
 		}).Debug("clearbank.client -> response")
+	}
+
+	if resp.StatusCode == http.StatusTooManyRequests && req.req.Method == http.MethodGet {
+		var rateLimitResp RateLimitResponse
+		if err := json.Unmarshal(b, &rateLimitResp); err == nil {
+			retryAfter := rateLimitResp.RetryInSeconds()
+			if retryAfter > 0 {
+				select {
+				case <-time.After(time.Duration(retryAfter) * time.Second):
+					goto retry
+				case <-ctx.Done():
+					return ctx.Err()
+				}
+			}
+		}
 	}
 
 	if !slices.Contains(req.expectedStatuses, resp.StatusCode) {

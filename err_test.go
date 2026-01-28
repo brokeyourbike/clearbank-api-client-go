@@ -44,3 +44,54 @@ func TestErrResponse_NoErrors(t *testing.T) {
 	assert.Len(t, resp.Errors, 0)
 	assert.Equal(t, "Error during API call. Status: 400 Type: https://tools.ietf.org/html/rfc7231#section-6.5.1 Title: One or more validation errors occurred.", resp.Error())
 }
+
+func TestRateLimitResponse_RetryInSeconds(t *testing.T) {
+	tests := []struct {
+		name     string
+		message  string
+		expected uint
+	}{
+		{
+			name:     "valid seconds",
+			message:  "Rate limit is exceeded. Try again in 30 seconds.",
+			expected: 30,
+		},
+		{
+			name:     "different number",
+			message:  "Try again in 5 seconds.",
+			expected: 5,
+		},
+		{
+			name:     "no seconds in message",
+			message:  "Rate limit is exceeded.",
+			expected: 0,
+		},
+		{
+			name:     "non-numeric seconds",
+			message:  "Try again in thirty seconds.",
+			expected: 0,
+		},
+		{
+			name:     "seconds without space",
+			message:  "Try again in 30seconds.",
+			expected: 0,
+		},
+		{
+			name:     "empty message",
+			message:  "",
+			expected: 0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resp := clearbank.RateLimitResponse{
+				StatusCode: 429,
+				Message:    tt.message,
+			}
+
+			result := resp.RetryInSeconds()
+			assert.Equal(t, tt.expected, result)
+		})
+	}
+}
