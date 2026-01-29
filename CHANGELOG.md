@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.0](https://github.com/brokeyourbike/clearbank-api-client-go/compare/v0.24.2...v0.25.0) (2026-01-28)
+
+
+### Features
+
+* retry and wait ([326f772](https://github.com/brokeyourbike/clearbank-api-client-go/commit/326f772a555380190bcd2dc581b5bf5249e02ab7))
+
 ## [0.24.2](https://github.com/brokeyourbike/clearbank-api-client-go/compare/v0.24.1...v0.24.2) (2026-01-21)
 
 
