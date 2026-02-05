@@ -1,0 +1,17 @@
+{
+    "MandateId": "086ab6ec-ab78-2432-12a1-3c273d81d961",
+    "OriginatorInformation": {
+        "AccountName": "Q-MOBILE",
+        "SortCode": "113344",
+        "AccountNumber": "78978900"
+    },
+    "PayerInformation": {
+        "AccountName": "MARY BROWN",
+        "SortCode": "002200",
+        "AccountNumber": "43211234"
+    },
+    "ServiceUserNumber": "030201",
+    "Reference": "MBQZRTF12345",
+    "TransactionCode": "0N",
+    "Source": "Bacs"
+}
