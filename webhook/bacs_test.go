@@ -21,6 +21,7 @@ func TestBacsMandateCancelledV2Payload(t *testing.T) {
 	err := json.Unmarshal(bacsMandateCancelledV2, &d1)
 	assert.NoError(t, err)
 	assert.Equal(t, uuid.MustParse("8a1c544f-304b-d55a-f459-98d0bedaf19f"), d1.MandateID)
+	assert.Equal(t, "MARY BROWN", d1.PayerInformation.AccountName)
 }
 
 func TestBacsMandateInitiatedV2Payload(t *testing.T) {
@@ -28,4 +29,5 @@ func TestBacsMandateInitiatedV2Payload(t *testing.T) {
 	err := json.Unmarshal(bacsMandateInitiatedV2, &d1)
 	assert.NoError(t, err)
 	assert.Equal(t, uuid.MustParse("086ab6ec-ab78-2432-12a1-3c273d81d961"), d1.MandateID)
+	assert.Equal(t, "MARY BROWN", d1.PayerInformation.AccountName)
 }
