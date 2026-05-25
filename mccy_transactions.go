@@ -350,3 +350,13 @@ func (c *client) FetchMCCYTransactionsForVirtualAccount(ctx context.Context, vir
 	req.DecodeTo(&data)
 	return data, c.do(ctx, req)
 }
+
+func (c *client) CancelMCCYBatchPayments(ctx context.Context, batchID uuid.UUID) (err error) {
+	req, err := c.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/v1/mccy/payments/%s", batchID.String()), nil)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusNoContent)
+	return c.do(ctx, req)
+}

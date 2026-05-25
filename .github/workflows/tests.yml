@@ -24,7 +24,7 @@ jobs:
     - run: go build -v ./...
     - run: go test -race -covermode=atomic -coverprofile=coverage.out -v ./...
 
-    - uses: codecov/codecov-action@v5
+    - uses: codecov/codecov-action@v6
       continue-on-error: true
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
