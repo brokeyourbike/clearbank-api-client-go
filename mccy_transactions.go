@@ -15,6 +15,7 @@ type MCCYTransactionsClient interface {
 	FetchMCCYTransaction(ctx context.Context, trxID uuid.UUID) (MCCYTransactionResponse, error)
 	FetchMCCYTransactionsForAccount(ctx context.Context, accountID uuid.UUID, currency string, params FetchTransactionsParams) (MCCYTransactionsResponse, error)
 	FetchMCCYTransactionsForVirtualAccount(ctx context.Context, virtualAccountID uuid.UUID, currency string, params FetchTransactionsParams) (MCCYTransactionsResponse, error)
+	CancelMCCYBatchPayments(ctx context.Context, batchID uuid.UUID) error
 }
 
 type CreateInternalTransactionPayload struct {
