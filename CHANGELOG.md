@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.28.0](https://github.com/brokeyourbike/clearbank-api-client-go/compare/v0.27.0...v0.28.0) (2026-05-25)
+
+
+### Features
+
+* cancel batch ([aa86280](https://github.com/brokeyourbike/clearbank-api-client-go/commit/aa8628097b2d1daa5810d630708eaaab10284ab0))
+
 ## [0.27.0](https://github.com/brokeyourbike/clearbank-api-client-go/compare/v0.26.0...v0.27.0) (2026-02-05)
 
 
