@@ -35,8 +35,8 @@ const (
 	FxTradeSettled                 = "Fx.Trade.Settled"
 	FxTradeCancelled               = "Fx.Trade.Cancelled"
 	FxTradeSettlementFailed        = "Fx.Trade.Settlement.Failed"
-	BacsMandateInitiatedV2         = "BacsMandateInitiatedV2"
-	BacsMandateCancelledV2         = "BacsMandateCancelledV2"
+	BacsMandateInitiatedV2         = "BacsMandateInitiated"
+	BacsMandateCancelledV2         = "BacsMandateCancelled"
 	BacsMandateCancellationFailed  = "BacsMandateCancellationFailed"
 )
 
