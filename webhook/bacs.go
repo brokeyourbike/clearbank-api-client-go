@@ -1,6 +1,23 @@
 package webhook
 
-import "github.com/google/uuid"
+import (
+	"github.com/brokeyourbike/clearbank-api-client-go"
+	"github.com/google/uuid"
+)
+
+// BacsDirectDebitInboundPaymentCreatedV2
+// This webhook confirms that a Bacs Direct Debit inbound payment has been received.
+type BacsDirectDebitInboundPaymentCreatedV2Payload struct {
+	PayerInformation      *BacsActor     `json:"PayerInformation"`
+	OriginatorInformation *BacsActor     `json:"OriginatorInformation"`
+	Amount                float64        `json:"Amount"`
+	Reference             string         `json:"Reference"`
+	ProcessingDate        clearbank.Time `json:"ProcessingDate"`
+	ServiceUserNumber     string         `json:"ServiceUserNumber"`
+	TransactionCode       string         `json:"TransactionCode"`
+	Source                string         `json:"Source"`
+	BacsTransactionId     uuid.UUID      `json:"BacsTransactionId"`
+}
 
 // BacsMandateInitiatedV2
 // This webhook confirms that a Bacs Direct Debit Instruction has been set up successfully.

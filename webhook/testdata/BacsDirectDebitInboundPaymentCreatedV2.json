@@ -1,0 +1,19 @@
+{
+   "PayerInformation": {
+      "AccountName": "JOHN DOE",
+      "SortCode": "112233",
+      "AccountNumber": "12345678"
+   },
+   "OriginatorInformation": {
+      "AccountName": "UK TELECOMMS",
+      "SortCode": "778899",
+      "AccountNumber": "12121212"
+   },
+   "Amount": 13.75,
+   "Reference": "JODTR54PXZNOV2018",
+   "ProcessingDate": "2019-01-01T00:00:00Z",
+   "ServiceUserNumber": "010203",
+   "TransactionCode": "01",
+   "Source": "Bacs",
+   "BacsTransactionId": "d9c36960-53dc-fb00-8b4b-d35bdcd8ac03"
+}
