@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.0](https://github.com/brokeyourbike/clearbank-api-client-go/compare/v1.0.0...v1.1.0) (2026-07-17)
+
+
+### Features
+
+* debit ([191cc1e](https://github.com/brokeyourbike/clearbank-api-client-go/commit/191cc1eed027639661a58f2fc50b314e9e8bb7c0))
+* return ([0e34769](https://github.com/brokeyourbike/clearbank-api-client-go/commit/0e34769d867f80605f55c783d53c2038ec8ac838))
+* return ([8ba5d3b](https://github.com/brokeyourbike/clearbank-api-client-go/commit/8ba5d3b3503f169ee2b3a48651ffc0de7fb33d93))
+* return ([d381b9e](https://github.com/brokeyourbike/clearbank-api-client-go/commit/d381b9ee3f6e4b39858b68bdec5c4cb4166ba77e))
+* return code ([77624dc](https://github.com/brokeyourbike/clearbank-api-client-go/commit/77624dcb10b3178b3865e579e6686713a019a64b))
+
 ## [1.0.0](https://github.com/brokeyourbike/clearbank-api-client-go/compare/v0.28.1...v1.0.0) (2026-06-19)
 
 
