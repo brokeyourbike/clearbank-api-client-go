@@ -19,6 +19,27 @@ var bacsMandateInitiatedV2 []byte
 //go:embed testdata/BacsDirectDebitInboundPaymentCreatedV2.json
 var bacsDirectDebitInboundPaymentCreatedV2 []byte
 
+//go:embed testdata/BacsDirectDebitReturnCreatedV4.json
+var bacsDirectDebitReturnCreatedV4 []byte
+
+func TestBacsDirectDebitReturnCreatedV4Payload(t *testing.T) {
+	var d1 webhook.BacsDirectDebitReturnCreatedV4Payload
+	err := json.Unmarshal(bacsDirectDebitReturnCreatedV4, &d1)
+	assert.NoError(t, err)
+	assert.Equal(t, uuid.MustParse("14a216fa-a70b-a211-3f31-47c2d992c86c"), d1.BacsTransactionId)
+	assert.Equal(t, "MARY BROWN", d1.PayerInformation.AccountName)
+	assert.Equal(t, "Q-MOBILE", d1.OriginatorInformation.AccountName)
+	assert.Equal(t, "B", d1.ReasonCode)
+	assert.Equal(t, "2a51971a3576b2a5960ff65202e1539d", d1.Reference)
+	assert.Equal(t, 25.0, d1.Amount)
+	assert.Equal(t, "17", d1.TransactionCode)
+	assert.Equal(t, "Bacs", d1.Source)
+	assert.Equal(t, "2019-04-01 00:00:00 +0000 UTC", d1.ProcessingDate.String())
+	assert.Equal(t, "030201", d1.ServiceUserNumber)
+	assert.Equal(t, uuid.MustParse("d61b2513-f586-43da-8b72-4f6ba2e28fea"), d1.OriginalBacsTransactionId)
+	assert.Equal(t, "012345", d1.OriginalBacsTransactionSun)
+}
+
 func TestBacsDirectDebitInboundPaymentCreatedV2Payload(t *testing.T) {
 	var d1 webhook.BacsDirectDebitInboundPaymentCreatedV2Payload
 	err := json.Unmarshal(bacsDirectDebitInboundPaymentCreatedV2, &d1)

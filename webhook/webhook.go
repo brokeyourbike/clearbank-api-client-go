@@ -39,6 +39,7 @@ const (
 	BacsMandateCancelledV2                 = "BacsMandateCancelled"
 	BacsMandateCancellationFailed          = "BacsMandateCancellationFailed"
 	BacsDirectDebitInboundPaymentCreatedV2 = "BacsDirectDebitInboundPaymentCreated"
+	BacsDirectDebitReturnCreatedV4         = "BacsDirectDebitReturnCreated"
 )
 
 type Request struct {

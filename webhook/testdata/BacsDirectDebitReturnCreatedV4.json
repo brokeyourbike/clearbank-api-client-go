@@ -1,0 +1,22 @@
+{
+    "PayerInformation": {
+        "AccountNumber": "43211234",
+        "SortCode": "002200",
+        "AccountName": "MARY BROWN"
+    },
+    "OriginatorInformation": {
+        "AccountNumber": "78978900",
+        "SortCode": "113344",
+        "AccountName": "Q-MOBILE"
+    },
+    "ReasonCode": "B",
+    "Reference": "2a51971a3576b2a5960ff65202e1539d",
+    "Amount": 25.00,
+    "TransactionCode": "17",
+    "Source": "Bacs",
+    "BacsTransactionId": "14a216fa-a70b-a211-3f31-47c2d992c86c",
+    "ProcessingDate": "2019-04-01T00:00:00Z",
+    "ServiceUserNumber": "030201",
+    "OriginalBacsTransactionId": "d61b2513-f586-43da-8b72-4f6ba2e28fea",
+    "OriginalBacsTransactionSun": "012345"
+}

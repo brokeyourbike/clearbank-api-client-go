@@ -19,6 +19,23 @@ type BacsDirectDebitInboundPaymentCreatedV2Payload struct {
 	BacsTransactionId     uuid.UUID      `json:"BacsTransactionId"`
 }
 
+// BacsDirectDebitReturnCreatedV4
+// This webhook confirms a Bacs Direct Debit return has been created.
+type BacsDirectDebitReturnCreatedV4Payload struct {
+	PayerInformation           *BacsActor     `json:"PayerInformation"`
+	OriginatorInformation      *BacsActor     `json:"OriginatorInformation"`
+	ReasonCode                 string         `json:"ReasonCode"`
+	Reference                  string         `json:"Reference"`
+	Amount                     float64        `json:"Amount"`
+	TransactionCode            string         `json:"TransactionCode"`
+	Source                     string         `json:"Source"`
+	BacsTransactionId          uuid.UUID      `json:"BacsTransactionId"`
+	ProcessingDate             clearbank.Time `json:"ProcessingDate"`
+	ServiceUserNumber          string         `json:"ServiceUserNumber"`
+	OriginalBacsTransactionId  uuid.UUID      `json:"OriginalBacsTransactionId"`
+	OriginalBacsTransactionSun string         `json:"OriginalBacsTransactionSun"`
+}
+
 // BacsMandateInitiatedV2
 // This webhook confirms that a Bacs Direct Debit Instruction has been set up successfully.
 type BacsMandateInitiatedV2Payload struct {
