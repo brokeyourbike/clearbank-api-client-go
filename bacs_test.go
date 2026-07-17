@@ -76,3 +76,31 @@ func TestReturnBacsPayment(t *testing.T) {
 	})
 	require.NoError(t, err)
 }
+
+func TestReturnVirtualAccountBacsPayment_RequestErr(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
+
+	err := client.ReturnVirtualAccountBacsPayment(nil, uuid.New(), uuid.New(), clearbank.ReturnBacsPaymentPayload{}) //lint:ignore SA1012 testing failure
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "failed to create request")
+}
+
+func TestReturnVirtualAccountBacsPayment(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	mockSigner := clearbank.NewMockSigner(t)
+	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
+
+	ctx := clearbank.RequestIdContext(context.TODO(), "123")
+	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
+
+	resp := &http.Response{StatusCode: http.StatusAccepted, Body: io.NopCloser(bytes.NewReader(nil))}
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
+
+	err := client.ReturnVirtualAccountBacsPayment(ctx, uuid.New(), uuid.New(), clearbank.ReturnBacsPaymentPayload{
+		Returns: []clearbank.BacsReturn{
+			{TransactionID: uuid.New(), ReasonCode: "0"},
+		},
+	})
+	require.NoError(t, err)
+}

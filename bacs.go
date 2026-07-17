@@ -17,6 +17,7 @@ type BacsClient interface {
 	CancelVirtualAccountMandate(ctx context.Context, accountID, virtualAccountID, mandateID uuid.UUID, reason string) error
 
 	ReturnBacsPayment(ctx context.Context, accountID uuid.UUID, payload ReturnBacsPaymentPayload) error
+	ReturnVirtualAccountBacsPayment(ctx context.Context, accountID, virtualAccountID uuid.UUID, payload ReturnBacsPaymentPayload) error
 }
 
 type MandatesResponse struct {
@@ -103,6 +104,16 @@ type ReturnBacsPaymentPayload struct {
 
 func (c *client) ReturnBacsPayment(ctx context.Context, accountID uuid.UUID, payload ReturnBacsPaymentPayload) error {
 	req, err := c.newRequest(ctx, http.MethodPost, fmt.Sprintf("/v1/Accounts/%s/Transactions/Returns", accountID), payload)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusAccepted)
+	return c.do(ctx, req)
+}
+
+func (c *client) ReturnVirtualAccountBacsPayment(ctx context.Context, accountID, virtualAccountID uuid.UUID, payload ReturnBacsPaymentPayload) error {
+	req, err := c.newRequest(ctx, http.MethodPost, fmt.Sprintf("/v1/Accounts/%s/Virtual/%s/Transactions/Returns", accountID, virtualAccountID), payload)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
