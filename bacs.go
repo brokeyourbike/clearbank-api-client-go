@@ -15,6 +15,8 @@ type BacsClient interface {
 
 	FetchVirtualAccountMandates(ctx context.Context, accountID, virtualAccountID uuid.UUID, pageNum int, pageSize int) (MandatesResponse, error)
 	CancelVirtualAccountMandate(ctx context.Context, accountID, virtualAccountID, mandateID uuid.UUID, reason string) error
+
+	ReturnBacsPayment(ctx context.Context, accountID uuid.UUID, payload ReturnBacsPaymentPayload) error
 }
 
 type MandatesResponse struct {
@@ -82,6 +84,25 @@ func (c *client) FetchVirtualAccountMandates(ctx context.Context, accountID, vir
 func (c *client) CancelVirtualAccountMandate(ctx context.Context, accountID, virtualAccountID, mandateID uuid.UUID, reason string) error {
 	payload := cancelMandatePayload{ReasonCode: reason}
 	req, err := c.newRequest(ctx, http.MethodDelete, fmt.Sprintf("/v1/Accounts/%s/Virtual/%s/Mandates/%s", accountID, virtualAccountID, mandateID), payload)
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.ExpectStatus(http.StatusAccepted)
+	return c.do(ctx, req)
+}
+
+type BacsReturn struct {
+	TransactionID uuid.UUID `json:"transactionId"`
+	ReasonCode    string    `json:"reasonCode"`
+}
+
+type ReturnBacsPaymentPayload struct {
+	Returns []BacsReturn `json:"returns"`
+}
+
+func (c *client) ReturnBacsPayment(ctx context.Context, accountID uuid.UUID, payload ReturnBacsPaymentPayload) error {
+	req, err := c.newRequest(ctx, http.MethodPost, fmt.Sprintf("/v1/Accounts/%s/Transactions/Returns", accountID), payload)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
