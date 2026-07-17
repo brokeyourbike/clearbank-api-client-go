@@ -29,7 +29,7 @@ func TestBacsDirectDebitReturnCreatedV4Payload(t *testing.T) {
 	assert.Equal(t, uuid.MustParse("14a216fa-a70b-a211-3f31-47c2d992c86c"), d1.BacsTransactionId)
 	assert.Equal(t, "MARY BROWN", d1.PayerInformation.AccountName)
 	assert.Equal(t, "Q-MOBILE", d1.OriginatorInformation.AccountName)
-	assert.Equal(t, "B", d1.ReasonCode)
+	assert.Equal(t, webhook.ARUDDAccountClosed, d1.ReasonCode)
 	assert.Equal(t, "2a51971a3576b2a5960ff65202e1539d", d1.Reference)
 	assert.Equal(t, 25.0, d1.Amount)
 	assert.Equal(t, "17", d1.TransactionCode)

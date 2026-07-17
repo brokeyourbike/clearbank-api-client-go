@@ -19,21 +19,38 @@ type BacsDirectDebitInboundPaymentCreatedV2Payload struct {
 	BacsTransactionId     uuid.UUID      `json:"BacsTransactionId"`
 }
 
+type ARUDDReasonCode string
+
+const (
+	ARUDDReferToPayer          ARUDDReasonCode = "0" // Refer to payer
+	ARUDDInstructionCancelled  ARUDDReasonCode = "1" // Instruction cancelled
+	ARUDDPayerDeceased         ARUDDReasonCode = "2" // Payer deceased
+	ARUDDAccountTransferred    ARUDDReasonCode = "3" // Account transferred
+	ARUDDAdvanceNoticeDisputed ARUDDReasonCode = "4" // Advance notice disputed
+	ARUDDNoAccount             ARUDDReasonCode = "5" // No account (OR wrong account type)
+	ARUDDNoInstruction         ARUDDReasonCode = "6" // No Instruction held
+	ARUDDAmountDiffers         ARUDDReasonCode = "7" // Amount differs
+	ARUDDAmountNotYetDue       ARUDDReasonCode = "8" // Amount not yet due
+	ARUDDPresentationOverdue   ARUDDReasonCode = "9" // Presentation overdue
+	ARUDDServiceUserDiffers    ARUDDReasonCode = "A" // Service user differs
+	ARUDDAccountClosed         ARUDDReasonCode = "B" // Account closed
+)
+
 // BacsDirectDebitReturnCreatedV4
 // This webhook confirms a Bacs Direct Debit return has been created.
 type BacsDirectDebitReturnCreatedV4Payload struct {
-	PayerInformation           *BacsActor     `json:"PayerInformation"`
-	OriginatorInformation      *BacsActor     `json:"OriginatorInformation"`
-	ReasonCode                 string         `json:"ReasonCode"`
-	Reference                  string         `json:"Reference"`
-	Amount                     float64        `json:"Amount"`
-	TransactionCode            string         `json:"TransactionCode"`
-	Source                     string         `json:"Source"`
-	BacsTransactionId          uuid.UUID      `json:"BacsTransactionId"`
-	ProcessingDate             clearbank.Time `json:"ProcessingDate"`
-	ServiceUserNumber          string         `json:"ServiceUserNumber"`
-	OriginalBacsTransactionId  uuid.UUID      `json:"OriginalBacsTransactionId"`
-	OriginalBacsTransactionSun string         `json:"OriginalBacsTransactionSun"`
+	PayerInformation           *BacsActor      `json:"PayerInformation"`
+	OriginatorInformation      *BacsActor      `json:"OriginatorInformation"`
+	ReasonCode                 ARUDDReasonCode `json:"ReasonCode"`
+	Reference                  string          `json:"Reference"`
+	Amount                     float64         `json:"Amount"`
+	TransactionCode            string          `json:"TransactionCode"`
+	Source                     string          `json:"Source"`
+	BacsTransactionId          uuid.UUID       `json:"BacsTransactionId"`
+	ProcessingDate             clearbank.Time  `json:"ProcessingDate"`
+	ServiceUserNumber          string          `json:"ServiceUserNumber"`
+	OriginalBacsTransactionId  uuid.UUID       `json:"OriginalBacsTransactionId"`
+	OriginalBacsTransactionSun string          `json:"OriginalBacsTransactionSun"`
 }
 
 // BacsMandateInitiatedV2
