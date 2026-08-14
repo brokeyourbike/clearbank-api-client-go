@@ -49,6 +49,36 @@ func TestCancelVirtualAccountMandate_RequestErr(t *testing.T) {
 	require.Contains(t, err.Error(), "failed to create request")
 }
 
+func TestCancelVirtualAccountMandate(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	mockSigner := clearbank.NewMockSigner(t)
+	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
+
+	ctx := clearbank.RequestIdContext(context.TODO(), "123")
+	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
+
+	resp := &http.Response{StatusCode: http.StatusAccepted, Body: io.NopCloser(bytes.NewReader(nil))}
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
+
+	err := client.CancelVirtualAccountMandate(ctx, uuid.New(), uuid.New(), uuid.New(), "1")
+	require.NoError(t, err)
+}
+
+func TestCancelAccountMandate(t *testing.T) {
+	mockHttpClient := clearbank.NewMockHttpClient(t)
+	mockSigner := clearbank.NewMockSigner(t)
+	client := clearbank.NewClient("token", mockSigner, clearbank.WithHTTPClient(mockHttpClient))
+
+	ctx := clearbank.RequestIdContext(context.TODO(), "123")
+	mockSigner.On("Sign", ctx, mock.Anything).Return([]byte("signed"), nil).Once()
+
+	resp := &http.Response{StatusCode: http.StatusAccepted, Body: io.NopCloser(bytes.NewReader(nil))}
+	mockHttpClient.On("Do", mock.AnythingOfType("*http.Request")).Return(resp, nil).Once()
+
+	err := client.CancelAccountMandate(ctx, uuid.New(), uuid.New(), "0")
+	require.NoError(t, err)
+}
+
 func TestReturnBacsPayment_RequestErr(t *testing.T) {
 	mockHttpClient := clearbank.NewMockHttpClient(t)
 	client := clearbank.NewClient("token", nil, clearbank.WithHTTPClient(mockHttpClient))
